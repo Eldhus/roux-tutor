@@ -123,6 +123,9 @@ button:hover { filter: brightness(1.08); }
 .like p { margin: 0; color: var(--ink-2); }
 #likes { font: 600 2rem var(--serif); color: var(--ink); margin-right: 0.3rem; }
 
+.flow { padding-left: 1.2rem; }
+.flow li { margin: 0.45rem 0; }
+.flow li::marker { color: var(--copper); font-weight: 700; }
 .next-list { padding-left: 1.2rem; }
 .next-list li { margin: 0.35rem 0; }
 

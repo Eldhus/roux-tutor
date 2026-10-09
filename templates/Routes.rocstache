@@ -22,11 +22,17 @@
 </section>
 
 <section>
-  <h2>Pure, then effectful</h2>
-  <p><code>page</code> is a plain function: a path in, a response out. It renders nothing
-  and reads nothing, so it is just data, which the next lesson tests.</p>
-  <p>Routes that read a file or the database are in <code>respond!</code>, above it. The
-  <code>!</code> marks a function with effects; Roc tracks them in the types, and the pages
-  that need none stay pure.</p>
+  <h2>How a request flows</h2>
+  <ol class="flow">
+    <li><code>init!</code> runs once, at start: it opens the database and returns the
+    app's <code>Context</code>, shared by every request.</li>
+    <li><code>respond!</code> runs for each request, on its own lightweight thread: the
+    routes that read a file or the database are matched there.</li>
+    <li>Everything else goes to <code>page</code>, a plain function: a path in, a response
+    out. It renders nothing and reads nothing, so it is just data, which the next lesson
+    tests.</li>
+  </ol>
+  <p>The <code>!</code> marks a function with effects. Roc tracks them in the types, so the
+  pages that need none stay pure, and you can see which is which.</p>
 </section>
 {{> Bottom nav}}

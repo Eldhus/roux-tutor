@@ -36,7 +36,8 @@ ROUX_ACME_IDENTIFIER=example.com ROUX_ACME_STATE=/var/lib/myapp \
   <h2>Where next</h2>
   <ul class="next-list">
     <li><a href="https://github.com/Eldhus/roux">roux</a>: the platform, its examples and design</li>
-    <li><a href="https://www.roc-lang.org/tutorial">The Roc tutorial</a>: the language</li>
+    <li><a href="https://www.roc-lang.org/tutorial">The Roc tutorial</a>: the language;
+    <code>roc experimental-lsp</code> gives your editor its types on hover</li>
     <li><a href="https://data-star.dev">Datastar</a>: more of what the attributes do</li>
     <li>This folder: delete the lessons and keep the frame. It is a roux app.</li>
   </ul>
