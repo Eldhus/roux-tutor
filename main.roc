@@ -171,19 +171,20 @@ lessons = [
 ## The page's title and the lessons, this one marked.
 frame : Str -> { title : Str, lessons : List({ href : Str, name : Str, number : Str, current : Bool }) }
 frame = |here| {
-	title: lessons.keep_if(|l| l.href == here).map(|l| l.name).first() ?? "Not found",
+	title: (lessons.find_first(|l| l.href == here) ?? { href: here, name: "Not found" }).name,
 	lessons: lessons.map_with_index(|l, i| { href: l.href, name: l.name, number: i.to_str(), current: l.href == here }),
 }
 
 ## The lessons before and after this one (none at either end).
 nav : Str -> { prev : List({ href : Str, name : Str }), next : List({ href : Str, name : Str }) }
-nav = |here| {
-	at = lessons.map_with_index(|l, i| if l.href == here i else 0).fold(0, |a, b| a + b)
-	{
-		prev: if at == 0 [] else lessons.sublist({ start: at - 1, len: 1 }),
-		next: lessons.sublist({ start: at + 1, len: 1 }),
+nav = |here|
+	match lessons.find_first_index(|l| l.href == here) {
+		Ok(at) => {
+			prev: if at == 0 [] else lessons.sublist({ start: at - 1, len: 1 }),
+			next: lessons.sublist({ start: at + 1, len: 1 }),
+		}
+		Err(NotFound) => { prev: [], next: [] }
 	}
-}
 
 not_found : Str -> Server.Response(_)
 not_found = |path| {
