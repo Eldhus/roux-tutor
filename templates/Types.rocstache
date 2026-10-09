@@ -1,0 +1,35 @@
+{{> Top frame}}
+<header>
+  <p class="kicker">Lesson 3</p>
+  <h1>Types</h1>
+  <p class="lede">A template and the Roc that fills it agree by type. Ask for a field Roc
+  does not give, and it is a compile error, never a blank on the page.</p>
+</header>
+
+<figure class="preview">
+  <figcaption><code>templates/Hello.rocstache</code>, rendered</figcaption>
+{{> Hello hello}}</figure>
+
+<section class="turn-box">
+  <h2>Your turn</h2>
+  <ol class="steps">
+    <li><p>In <code>templates/Hello.rocstache</code>, after the name, add
+    <code>from &#123;&#123; city &#125;&#125;</code>. Save.</p>
+    <p>roux adds <code>city : Str</code> to the contract in <code>templates/Hello.roc</code>, and roc finds
+    that <code>main.roc</code> builds <code>hello</code> without it. The error appears over this
+    page, and the page underneath is still the last good build.</p></li>
+    <li><p>In <code>main.roc</code>, give it one:</p>
+    <pre><code>hello = { name: you, city: "Reykjavík" }</code></pre>
+    <p>Save. The error goes, the page reloads, and the box says where you are from.</p></li>
+  </ol>
+</section>
+
+<section>
+  <h2>Why it works this way</h2>
+  <p>A field the template reads that no one provides, a typo, a list where a string was
+  meant: each is caught by roc, at the line in your Roc where the record is made. The
+  template's side is checked too: roux refuses a tag it cannot read.</p>
+  <p>Fields a template infers are strings. For numbers, a template declares its contract at
+  the top, as the next lesson's menu does.</p>
+</section>
+{{> Bottom nav}}

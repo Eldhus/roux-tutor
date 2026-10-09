@@ -1,0 +1,5 @@
+{{%
+## Sent alone as a Datastar patch: Datastar swaps the element with its id.
+Ctx : { count : I64 }
+%}}
+<span id="likes">{{ count }}</span>

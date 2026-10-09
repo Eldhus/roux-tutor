@@ -1,0 +1,32 @@
+{{> Top frame}}
+<header>
+  <p class="kicker">Lesson 5</p>
+  <h1>Routes</h1>
+  <p class="lede">There is no router to learn. A request's path is a string; Roc's
+  <code>match</code> picks the page.</p>
+</header>
+
+<section>
+  <p>Try these links. They are not pages yet:
+  <a class="pill" href="/greet/Ada">/greet/Ada</a>
+  <a class="pill" href="/greet/Grace">/greet/Grace</a></p>
+</section>
+
+<section class="turn-box">
+  <h2>Your turn</h2>
+  <p>In <code>main.roc</code>, find <code>page</code>. Each branch matches a path split on
+  <code>/</code>. Where it says <em>a route of your own goes here</em>, add:</p>
+  <pre><code>["", "greet", name] =&gt; Ok(Rocstache.html(Greeting.template({ frame: frame("/routes"), name })))</code></pre>
+  <p>Save, then follow the links again. <code>name</code> is whatever the path holds there:
+  a pattern binds it.</p>
+</section>
+
+<section>
+  <h2>Pure, then effectful</h2>
+  <p><code>page</code> is a plain function: a path in, a response out. It renders nothing
+  and reads nothing, so it is just data, which the next lesson tests.</p>
+  <p>Routes that read a file or the database are in <code>respond!</code>, above it. The
+  <code>!</code> marks a function with effects; Roc tracks them in the types, and the pages
+  that need none stay pure.</p>
+</section>
+{{> Bottom nav}}

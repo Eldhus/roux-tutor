@@ -1,0 +1,11 @@
+# The roux this tutorial fetches (./roux), and what it builds.
+.roux-tools/
+.roux/
+/main
+# What roux writes from templates/*.rocstache and db/*.sql.
+templates/*.roc
+db/*.roc
+# The app's database.
+*.db
+*.db-wal
+*.db-shm

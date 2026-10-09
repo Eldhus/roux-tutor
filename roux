@@ -1,0 +1,32 @@
+#!/bin/sh
+# roux, the version this tutorial is written for: fetched once into
+# .roux-tools/, its checksum checked, then run with your arguments.
+set -eu
+version=0.2.0
+sha256=2c22a046e402346045ed72a9f3b6819ddb93c3c459e070ece2683c2ecc0dbeef
+
+here=$(cd "$(dirname "$0")" && pwd)
+bin=$here/.roux-tools/roux-$version
+if [ ! -x "$bin/roux" ]; then
+	if [ "$(uname -sm)" != "Linux x86_64" ]; then
+		echo "roux runs on Linux x86-64; this is $(uname -sm)." >&2
+		exit 1
+	fi
+	url=https://github.com/Eldhus/roux/releases/download/v$version/roux-$version-x86_64-linux.tar.gz
+	echo "roux: fetching roux $version, once, into .roux-tools/" >&2
+	tmp=$(mktemp -d)
+	if command -v curl >/dev/null; then
+		curl -fsSL "$url" -o "$tmp/roux.tar.gz"
+	else
+		wget -q "$url" -O "$tmp/roux.tar.gz"
+	fi
+	if ! echo "$sha256  $tmp/roux.tar.gz" | sha256sum -c --status; then
+		echo "roux: the download's checksum is not roux $version's; nothing installed." >&2
+		rm -rf "$tmp"
+		exit 1
+	fi
+	mkdir -p "$bin"
+	tar -xzf "$tmp/roux.tar.gz" -C "$bin"
+	rm -rf "$tmp"
+fi
+exec "$bin/roux" "$@"

@@ -1,0 +1,38 @@
+{{> Top frame}}
+<header>
+  <p class="kicker">Lesson 8</p>
+  <h1>Live</h1>
+  <p class="lede">Hypermedia: the server sends HTML, and a few attributes make the page
+  live. No JavaScript of yours; <a href="https://data-star.dev">Datastar</a> does the
+  wiring.</p>
+</header>
+
+<section class="like">
+  <button data-on:click="@post('/like')">♥</button>
+  <p>{{> LikeCount likes}} likes, from everyone who ran this page on this machine</p>
+</section>
+
+<section class="turn-box">
+  <h2>Your turn</h2>
+  <ol class="steps">
+    <li><p>Click the heart. The browser posts to <code>/like</code>; <code>like!</code> in
+    <code>main.roc</code> counts it in the database and answers with a server-sent event
+    holding <code>templates/LikeCount.rocstache</code>, rendered. Datastar puts it where the element with
+    the same <code>id</code> is.</p></li>
+    <li><p>Open a second tab on this page and click in one. The other catches up when it
+    next loads: this patch answers the click that asked.</p></li>
+    <li><p>Edit <code>templates/LikeCount.rocstache</code>: make the number <code>&lt;strong&gt;</code>, keep
+    the <code>id</code>. A fragment is a template like any other: on screen as you save.</p></li>
+  </ol>
+</section>
+
+<section>
+  <h2>The whole loop</h2>
+  <pre><code>&lt;button data-on:click="@post('/like')"&gt;♥&lt;/button&gt;</code></pre>
+  <pre><code>stream = Sse.start!(request, [])?
+Sse.send!(stream, Rocstache.patch!(LikeCount.template({ count: count })))?
+Sse.end!(stream)</code></pre>
+  <p>The same template value a page response carries, sent as a patch. A stream can stay
+  open and send many: a clock, a log, a game.</p>
+</section>
+{{> Bottom nav}}

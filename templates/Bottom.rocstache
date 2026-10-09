@@ -1,0 +1,7 @@
+<nav class="turn">
+{{#prev}}  <a class="prev" href="{{ href }}"><small>back</small>{{ name }}</a>
+{{/prev}}{{#next}}  <a class="next" href="{{ href }}"><small>next</small>{{ name }}</a>
+{{/next}}</nav>
+</main>
+</body>
+</html>

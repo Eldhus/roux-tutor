@@ -1,0 +1,50 @@
+{{> Top frame}}
+<header>
+  <p class="kicker">Lesson 7</p>
+  <h1>Database</h1>
+  <p class="lede">SQLite inside the server, and SQL that is typed: roux-db reads your queries
+  and writes Roc functions for them.</p>
+</header>
+
+<section class="book">
+  <form method="post" action="/guestbook">
+    <input name="name" placeholder="Your name" maxlength="40" required>
+    <input name="message" placeholder="Say something" maxlength="280" required>
+    <button>Sign</button>
+  </form>
+  <ul class="signatures">
+{{#signatures}}    <li><b>{{ name }}</b> <span>{{ message }}</span> <time>{{ signed_at }}</time></li>
+{{/signatures}}  </ul>
+{{^signatures}}  <p class="empty">No one has signed yet. Be first.</p>
+{{/signatures}}</section>
+
+<section class="turn-box">
+  <h2>Your turn</h2>
+  <p>Sign the book. Then show how many have signed, through all three layers:</p>
+  <ol class="steps">
+    <li><p>A query, in <code>db/Guestbook.sql</code>:</p>
+    <pre><code>-- name: count :one
+-- @column total : I64
+SELECT count(*) AS total FROM signature;</code></pre>
+    <p>roux-db checks it against <code>db/schema.sql</code> and writes
+    <code>Guestbook.count!</code> into <code>db/Guestbook.roc</code>.</p></li>
+    <li><p>In <code>main.roc</code>, in <code>book!</code>, read it and pass it on:</p>
+    <pre><code>{ total } = Guestbook.count!(Sqlite.read(db, request))?
+Ok(Rocstache.html(Book.template({ frame: frame("/guestbook"), nav: nav("/guestbook"), signatures, total: total.to_str() })))</code></pre>
+    <p>The template's fields are strings unless it declares a contract, so the count is made
+    one here.</p></li>
+    <li><p>In <code>templates/Book.rocstache</code>, under the form:
+    <code>&lt;p&gt;&#123;&#123; total &#125;&#125; signed&lt;/p&gt;</code>.</p></li>
+  </ol>
+  <p>Get one layer wrong and its tool says so: roux-db for the SQL, roc for the Roc, roux for
+  the template.</p>
+</section>
+
+<section>
+  <h2>Where it lives</h2>
+  <p><code>tutor.db</code>, beside <code>main.roc</code>, made from <code>db/schema.sql</code>
+  the first time the app starts. Reads run on every core at once; a write takes the one
+  writer (<code>Sqlite.write!</code>) and ends with <code>Sqlite.commit!</code>. Changed the
+  schema? There are no migrations yet: delete <code>tutor.db</code> and it is made anew.</p>
+</section>
+{{> Bottom nav}}

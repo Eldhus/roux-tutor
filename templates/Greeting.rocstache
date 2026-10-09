@@ -1,0 +1,13 @@
+{{> Top frame}}
+<header class="hero">
+  <p class="kicker">/greet/{{ name }}</p>
+  <h1>Hello, {{ name }}!</h1>
+  <p class="lede">A route you added. Change the path and the page follows.</p>
+</header>
+<nav class="turn">
+  <a class="prev" href="/routes"><small>back</small>Routes</a>
+  <a class="next" href="/tests"><small>next</small>Tests</a>
+</nav>
+</main>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{{%
+## The menu. Declared, not inferred: the prices are numbers.
+Ctx : { dishes : List({ name : Str, price : U32 }) }
+%}}
+<div class="menu">
+  <p class="count">{{ dishes | len | plural "dish" "dishes" }} tonight</p>
+  <ul>
+{{#dishes}}    <li><span>{{ name }}</span><i></i><b>{{ price }} kr</b></li>
+{{/dishes}}  </ul>
+{{^dishes}}  <p class="empty">Nothing on the menu.</p>
+{{/dishes}}</div>

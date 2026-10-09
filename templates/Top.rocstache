@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }} · roux tutor</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="stylesheet" href="/style.css">
+<script type="module" src="/datastar-v1.0.2.js"></script>
+</head>
+<body>
+<nav class="rail">
+  <a class="brand" href="/"><img src="/favicon.svg" alt=""><span>roux</span><small>tutor</small></a>
+  <ol>
+{{#lessons}}    <li{{?current}} class="here"{{/current}}><a href="{{ href }}"><b>{{ number }}</b>{{ name }}</a></li>
+{{/lessons}}  </ol>
+  <p class="loop"><span class="dot"></span> <code>./roux dev main.roc</code></p>
+</nav>
+<main>

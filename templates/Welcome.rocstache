@@ -1,0 +1,36 @@
+{{> Top frame}}
+<header class="hero">
+  <p class="kicker">roux · a Roc platform for the web</p>
+  <h1>Cook a web app in&nbsp;Roc.</h1>
+  <p class="lede">Roc handlers, typed templates, SQLite and live updates, built into one
+  static executable that faces the internet alone.</p>
+</header>
+
+<section>
+  <h2>You are inside the tutorial</h2>
+  <p>This page is <code>templates/Welcome.rocstache</code>, in the folder you cloned, beside
+  <code>main.roc</code>, the Roc that serves it. Every lesson asks you to change one file. Save it, and this tab updates itself:
+  you never press reload here.</p>
+  <p>Put your editor and this tab side by side, with the terminal where you can see it.
+  <code>roux dev</code> prints one line each time it builds.</p>
+</section>
+
+<section class="turn-box">
+  <h2>Your turn</h2>
+  <p>Open <code>templates/Welcome.rocstache</code> and change the big heading above, the
+  <code>&lt;h1&gt;</code>. Save.</p>
+</section>
+
+<section>
+  <h2>What just happened</h2>
+  <p>roux turned the template into bytecode and told the running app to read it again.
+  Nothing compiled and nothing restarted; the terminal says how long it took:</p>
+  <pre class="term"><code>roux dev: build 1 ok (templates reread, 1) in 0.2 ms</code></pre>
+  <p>That is the loop for the whole tutorial:</p>
+  <dl class="loop-table">
+    <dt>a template's markup</dt><dd>on the page in milliseconds</dd>
+    <dt>Roc code</dt><dd>roc compiles, the app restarts: about a second</dd>
+    <dt>a mistake</dt><dd>shown over this page; the last good build keeps serving</dd>
+  </dl>
+</section>
+{{> Bottom nav}}
