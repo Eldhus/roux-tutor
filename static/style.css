@@ -37,11 +37,10 @@ body {
 a { color: var(--copper-2); text-decoration-thickness: 1px; text-underline-offset: 3px; }
 code { font: 0.88em var(--mono); background: var(--code); padding: 0.12em 0.4em; border-radius: 5px; }
 pre { margin: 0.9rem 0; padding: 0.95rem 1.1rem; background: var(--code); border: 1px solid var(--line);
-  border-radius: 10px; overflow-x: auto; line-height: 1.5; }
+  border-radius: 10px; overflow-x: auto; line-height: 1.5; tab-size: 4; }
 pre code { padding: 0; background: none; font-size: 0.84rem; }
 pre.term { border-left: 3px solid var(--copper); }
 pre.out { border-left: 3px solid var(--mute); color: var(--ink-2); }
-pre.file { max-height: 22rem; }
 
 /* The rail */
 .rail { position: sticky; top: 0; height: 100vh; padding: 1.6rem 1.2rem; border-right: 1px solid var(--line);

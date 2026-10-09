@@ -19,8 +19,9 @@
     <code>main.roc</code> counts it in the database and answers with a server-sent event
     holding <code>templates/LikeCount.rocstache</code>, rendered. Datastar puts it where the element with
     the same <code>id</code> is.</p></li>
-    <li><p>Open a second tab on this page and click in one. The other catches up when it
-    next loads: this patch answers the click that asked.</p></li>
+    <li><p>Reload the page. The count is still there: each click went through
+    <code>Sqlite.write!</code> and <code>Sqlite.commit!</code> into <code>tutor.db</code>, and the
+    page reads it back as it is made.</p></li>
     <li><p>Edit <code>templates/LikeCount.rocstache</code>: make the number <code>&lt;strong&gt;</code>, keep
     the <code>id</code>. A fragment is a template like any other: on screen as you save.</p></li>
   </ol>
