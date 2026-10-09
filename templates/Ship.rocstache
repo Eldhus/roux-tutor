@@ -8,11 +8,14 @@
 <section class="turn-box">
   <h2>Your turn</h2>
   <pre class="term"><code>./roux build main.roc
-ls -lh main
-ROUX_PORT=8081 ./main</code></pre>
-  <p>That is the whole app, optimized: the server, your Roc, the templates' bytecode,
-  SQLite. Open <a href="http://localhost:8081">localhost:8081</a> beside this one.
-  <code>static/</code> is read from beside it, and <code>tutor.db</code> is made there.</p>
+ls -lh main</code></pre>
+  <p>About 3 MB: the whole app, optimized. The server, your Roc, the templates' bytecode,
+  SQLite. Now run it somewhere else, as a server would, with its static files beside it:</p>
+  <pre class="term"><code>mkdir ../shipped &amp;&amp; cp -r main static ../shipped
+cd ../shipped &amp;&amp; ROUX_PORT=8081 ./main</code></pre>
+  <p>Open <a href="http://localhost:8081">localhost:8081</a>. It makes its own
+  <code>tutor.db</code> there: an empty guestbook, as on a new server. (This tab's app holds
+  the one in your clone.)</p>
 </section>
 
 <section>

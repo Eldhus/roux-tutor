@@ -28,13 +28,16 @@
 SELECT count(*) AS total FROM signature;</code></pre>
     <p>roux-db checks it against <code>db/schema.sql</code> and writes
     <code>Guestbook.count!</code> into <code>db/Guestbook.roc</code>.</p></li>
-    <li><p>In <code>main.roc</code>, in <code>book!</code>, read it and pass it on:</p>
-    <pre><code>{ total } = Guestbook.count!(Sqlite.read(db, request))?
+    <li><p>In <code>templates/Book.rocstache</code>, under the form:
+    <code>&lt;p&gt;&#123;&#123; total &#125;&#125; signed&lt;/p&gt;</code>. Save: roc now says
+    <code>Book.template</code> needs a <code>Book.Ctx</code>, which has a <code>total</code>
+    (<code>templates/Book.roc</code> shows it) that <code>main.roc</code> does not give yet.</p></li>
+    <li><p>In <code>main.roc</code>, in <code>book!</code>, read the count and pass it on:</p>
+    <pre><code>signatures = Guestbook.recent!(Sqlite.read(db, request))?
+{ total } = Guestbook.count!(Sqlite.read(db, request))?
 Ok(Rocstache.html(Book.template({ frame: frame("/guestbook"), nav: nav("/guestbook"), signatures, total: total.to_str() })))</code></pre>
     <p>The template's fields are strings unless it declares a contract, so the count is made
     one here.</p></li>
-    <li><p>In <code>templates/Book.rocstache</code>, under the form:
-    <code>&lt;p&gt;&#123;&#123; total &#125;&#125; signed&lt;/p&gt;</code>.</p></li>
   </ol>
   <p>Get one layer wrong and its tool says so: roux-db for the SQL, roc for the Roc, roux for
   the template.</p>

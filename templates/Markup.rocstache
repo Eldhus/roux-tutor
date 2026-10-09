@@ -26,8 +26,8 @@
   shares its sidebar (<code>Top.rocstache</code>) and its footer
   (<code>Bottom.rocstache</code>).</p>
   <p>A markup edit never runs a compiler: roux makes new bytecode in under a millisecond
-  and the app swaps it in while it keeps serving. Try breaking the HTML instead, or a tag:
-  write <code>&#123;&#123; name</code> without its braces. roux refuses it, names the line, and
-  the page keeps the last good version.</p>
+  and the app swaps it in while it keeps serving. Now break a tag: delete the closing
+  <code>&#125;&#125;</code> after <code>name</code>. roux refuses the template, names the line
+  over this page, and the box keeps its last good version until you put them back.</p>
 </section>
 {{> Bottom nav}}

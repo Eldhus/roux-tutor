@@ -40,7 +40,7 @@ pre { margin: 0.9rem 0; padding: 0.95rem 1.1rem; background: var(--code); border
   border-radius: 10px; overflow-x: auto; line-height: 1.5; }
 pre code { padding: 0; background: none; font-size: 0.84rem; }
 pre.term { border-left: 3px solid var(--copper); }
-pre.term code::before { content: "$ "; color: var(--mute); }
+pre.out { border-left: 3px solid var(--mute); color: var(--ink-2); }
 pre.file { max-height: 22rem; }
 
 /* The rail */

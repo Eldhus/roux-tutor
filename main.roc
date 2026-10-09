@@ -14,6 +14,7 @@ import pf.Url
 import db/Database
 import db/Guestbook
 import db/Likes
+import templates/Hello
 import templates/Welcome
 import templates/Markup
 import templates/Data
@@ -33,10 +34,13 @@ import templates/LikeCount
 ## Lesson 2: who the greeting is for.
 you = "friend"
 
-## Lesson 3 adds a field here (the template will ask for it).
+## Lesson 3 adds a field here. `Hello.Ctx` is what templates/Hello.rocstache
+## reads: roux wrote that type, in templates/Hello.roc.
+hello : Hello.Ctx
 hello = { name: you }
 
 ## Lesson 4: the menu. Add a dish.
+dishes : List({ name : Str, price : U32 })
 dishes = [
 	{ name: "Roux", price: 120 },
 	{ name: "Velouté", price: 240 },

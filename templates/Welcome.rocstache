@@ -25,7 +25,7 @@
   <h2>What just happened</h2>
   <p>roux turned the template into bytecode and told the running app to read it again.
   Nothing compiled and nothing restarted; the terminal says how long it took:</p>
-  <pre class="term"><code>roux dev: build 1 ok (templates reread, 1) in 0.2 ms</code></pre>
+  <pre class="out"><code>roux dev: build 1 ok (templates reread, 1) in 0.2 ms</code></pre>
   <p>That is the loop for the whole tutorial:</p>
   <dl class="loop-table">
     <dt>a template's markup</dt><dd>on the page in milliseconds</dd>
