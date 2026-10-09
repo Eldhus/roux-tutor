@@ -136,10 +136,13 @@ button:hover { filter: brightness(1.08); }
 .turn .next { margin-left: auto; text-align: right; background: color-mix(in srgb, var(--copper) 12%, transparent); }
 
 @media (max-width: 820px) {
-  body { grid-template-columns: 1fr; }
+  body { grid-template-columns: minmax(0, 1fr); font-size: 16px; }
   .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
-  .rail ol { grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); }
+  .rail ol { grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); }
   .loop { display: none; }
-  main { padding: 2rem 1.2rem 3rem; }
+  main { padding: 2rem 1.1rem 3rem; min-width: 0; }
+  dl.loop-table, dl.syntax { display: block; }
+  dl dd { margin: 0 0 0.8rem; }
   .book form { grid-template-columns: 1fr; }
+  .turn a { min-width: 0; flex: 1; }
 }
