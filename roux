@@ -2,8 +2,8 @@
 # roux, the version this tutorial is written for: fetched once into
 # .roux-tools/, its checksum checked, then run with your arguments.
 set -eu
-version=0.2.2
-sha256=fa7c506ca24b67421433da28eb41ef4c4517760c6c888b7ed3217f0a8cbeab43
+version=0.2.3
+sha256=b87ab33c2ec7718a0733940983cba7d30f768c325ce139f3e9a59a194aa3c444
 
 here=$(cd "$(dirname "$0")" && pwd)
 bin=$here/.roux-tools/roux-$version

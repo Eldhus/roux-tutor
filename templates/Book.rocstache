@@ -47,7 +47,11 @@ Ok(Rocstache.html(Book.template({ frame: frame("/guestbook"), nav: nav("/guestbo
   <h2>Where it lives</h2>
   <p><code>tutor.db</code>, beside <code>main.roc</code>, made from <code>db/schema.sql</code>
   the first time the app starts. Reads run on every core at once; a write takes the one
-  writer (<code>Sqlite.write!</code>) and ends with <code>Sqlite.commit!</code>. Changed the
-  schema? There are no migrations yet: delete <code>tutor.db</code> and it is made anew.</p>
+  writer (<code>Sqlite.write!</code>) and ends with <code>Sqlite.commit!</code>.</p>
+  <p>Editing a query is like editing Roc: roux-db rewrites its module, roc builds, the app
+  restarts, and a query roux-db refuses shows over the page with its line. Changing
+  <code>db/schema.sql</code> is different: there are no migrations yet, so the restarted app
+  refuses the old database and says so in this tab. Delete <code>tutor.db</code> (its rows
+  go) and press <em>Start it again</em> there.</p>
 </section>
 {{> Bottom nav}}
