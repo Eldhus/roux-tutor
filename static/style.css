@@ -12,6 +12,9 @@
   --roux: #8a4b2a;
   --code: #241a16;
   --ok: #8fc98a;
+  /* The speed page: the phases of a save, and the race's lanes. */
+  --p-roux: #ffb07a; --p-net: #ec7a41; --p-ready: #b8573a; --p-paint: #6e4a3c;
+  --lane-0: #e9b44c; --lane-1: #ec7a41; --lane-2: #e0567a; --lane-3: #5fb38a; --lane-4: #8a7cf0;
   --serif: "Iowan Old Style", "Palatino Linotype", Charter, "Bitstream Charter", Georgia, serif;
   --sans: system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif;
   --mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
@@ -21,6 +24,8 @@
   :root {
     --bg: #fbf6ef; --bg-2: #f3eadf; --ink: #241812; --ink-2: #4c3a2e; --mute: #8a7564;
     --line: #e2d3c2; --copper: #c4561f; --copper-2: #9c3f12; --code: #f1e5d6; --ok: #2f7d32;
+    --p-roux: #e08a4c; --p-net: #c4561f; --p-ready: #8f3d22; --p-paint: #c9a993;
+    --lane-0: #c98f16; --lane-1: #c4561f; --lane-2: #c23a62; --lane-3: #2f8f62; --lane-4: #5d4fd0;
     color-scheme: light;
   }
 }
@@ -67,8 +72,12 @@ pre.out { border-left: 3px solid var(--mute); color: var(--ink-2); }
 
 /* The page */
 main { max-width: 800px; width: 100%; padding: 3.2rem 3rem 4rem; }
-header { margin-bottom: 2.2rem; }
-.kicker { margin: 0 0 0.4rem; color: var(--copper); font: 600 0.78rem var(--mono); text-transform: uppercase; letter-spacing: 0.16em; }
+header { margin-bottom: 2.2rem; padding-bottom: 1.6rem; position: relative; }
+header::after { content: ""; position: absolute; left: 0; bottom: 0; width: min(100%, 22rem); height: 2px;
+  border-radius: 2px; background: linear-gradient(90deg, var(--copper), var(--copper-2), transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--copper) 55%, transparent); }
+.kicker { margin: 0 0 0.4rem; color: var(--copper); font: 600 0.78rem var(--mono); text-transform: uppercase; letter-spacing: 0.16em;
+  text-shadow: 0 0 18px color-mix(in srgb, var(--copper) 50%, transparent); }
 h1 { margin: 0; font: 600 clamp(2.4rem, 5vw, 3.6rem)/1.05 var(--serif); letter-spacing: -0.025em; }
 .hero h1 { font-size: clamp(2.8rem, 7vw, 4.8rem); }
 h1 code { font-size: 0.7em; }
@@ -144,30 +153,69 @@ button:hover { filter: brightness(1.08); }
 .go:hover { filter: brightness(1.08); }
 
 /* Speed */
-.card { padding: 1.4rem 1.5rem; border: 1px solid var(--line); border-radius: 14px; background: var(--bg-2); }
-.card .preview { margin: 1rem 0 1.2rem; background: var(--bg); }
+.card { margin: 1.6rem 0; padding: 1.5rem 1.6rem; border: 1px solid var(--line); border-radius: 16px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-2) 92%, var(--copper)), var(--bg-2) 40%);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 6%, transparent) inset, 0 18px 40px -28px #000; }
+.card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.card-head h2 { margin: 0; }
+.card-head p { margin: 0; color: var(--mute); font-size: 0.9rem; }
+.card .preview { margin: 1.3rem 0; background: var(--bg); }
 .card .preview figcaption { background: var(--bg-2); }
-.stopwatch { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
-.stopwatch div { padding: 0.9rem 1rem; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); }
-.stopwatch b { display: block; font: 600 1.9rem/1.1 var(--serif); font-variant-numeric: tabular-nums; }
-.stopwatch small { color: var(--mute); font-size: 0.78rem; }
-.stopwatch .total { border-color: var(--copper); }
-.stopwatch .total b { color: var(--copper-2); }
-.history { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 4px; }
-.history li { display: flex; align-items: center; gap: 0.6rem; font: 0.75rem var(--mono); color: var(--mute); }
-.history li span { height: 8px; width: var(--w); min-width: 3px; max-width: 70%; border-radius: 4px;
-  background: linear-gradient(90deg, var(--copper), var(--copper-2)); }
-.note { color: var(--mute); font-size: 0.88rem; }
-.lanes { width: 100%; border-collapse: collapse; margin-top: 1rem; font-variant-numeric: tabular-nums; }
-.lanes th { text-align: left; font: 600 0.7rem var(--mono); color: var(--mute); text-transform: uppercase;
-  letter-spacing: 0.1em; padding: 0.3rem 0.4rem; }
-.lanes td { padding: 0.55rem 0.4rem; border-top: 1px solid var(--line); font: 0.85rem var(--mono); white-space: nowrap; }
-.lanes td:first-child { white-space: normal; font-family: var(--sans); }
-.lanes td small { display: block; color: var(--mute); font-size: 0.75rem; }
-.lanes .bar { width: 35%; }
-.lanes .bar span { display: block; height: 10px; width: 0; border-radius: 5px; transition: width 0.15s;
-  background: linear-gradient(90deg, var(--copper), var(--copper-2)); }
-#race button { margin-top: 0.4rem; }
+.note { color: var(--mute); font-size: 0.86rem; margin: 1rem 0 0; }
+.note b { color: var(--ink-2); }
+.mono, .readout b, .legend dd, .rate, .stats b, .facts dt, .history li { font-variant-numeric: tabular-nums; }
+
+/* Save to pixels */
+.clock { display: grid; grid-template-columns: minmax(10rem, auto) 1fr; gap: 1.6rem; align-items: center; }
+.readout b { display: block; font: 700 clamp(2.6rem, 6vw, 3.6rem)/1 var(--mono); letter-spacing: -0.04em;
+  color: var(--copper-2); text-shadow: 0 0 24px color-mix(in srgb, var(--copper) 45%, transparent); }
+.readout small { color: var(--mute); font: 600 0.72rem var(--mono); text-transform: uppercase; letter-spacing: 0.14em; }
+.track { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--bg); border: 1px solid var(--line); }
+.track i, .mini i { display: block; height: 100%; transition: width 0.4s cubic-bezier(.2,.8,.2,1); }
+.p-roux { background: var(--p-roux); box-shadow: 0 0 12px var(--p-roux); }
+.p-net { background: var(--p-net); }
+.p-ready { background: var(--p-ready); }
+.p-paint { background: var(--p-paint); }
+.legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin: 0.9rem 0 0; }
+.legend div { display: grid; gap: 0.1rem; }
+.legend dt { display: flex; align-items: center; gap: 0.4rem; font: 600 0.72rem var(--mono); color: var(--mute);
+  text-transform: uppercase; letter-spacing: 0.08em; }
+.legend dt i { width: 9px; height: 9px; border-radius: 3px; box-shadow: none; }
+.legend dd { margin: 0; font: 700 1.15rem var(--mono); color: var(--ink); }
+.legend small { color: var(--mute); font-size: 0.72rem; line-height: 1.3; }
+.history { list-style: none; padding: 0; margin: 1.2rem 0 0; display: grid; gap: 5px; }
+.history li { display: flex; align-items: center; gap: 0.7rem; font: 0.75rem var(--mono); color: var(--mute); }
+.mini { display: flex; height: 7px; width: 70%; border-radius: 4px; overflow: hidden; background: var(--bg); }
+
+/* The race */
+.start { display: flex; align-items: center; gap: 1rem; margin: 1.2rem 0 0.4rem; }
+.start button { padding: 0.65rem 1.5rem; font-size: 1rem; letter-spacing: 0.02em; }
+.start button:disabled { opacity: 0.55; cursor: default; }
+.lights { display: flex; gap: 0.45rem; }
+.lights i { width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 1px solid var(--line); transition: all 0.12s; }
+.lights i.on { background: #e5483a; border-color: #e5483a; box-shadow: 0 0 12px #e5483a; }
+.lights i.go { background: var(--ok); border-color: var(--ok); box-shadow: 0 0 12px var(--ok); }
+.lanes { display: grid; gap: 0.2rem; margin-top: 1rem; }
+.lane { display: grid; grid-template-columns: 8.5rem 1fr; grid-template-rows: auto auto; column-gap: 1rem;
+  padding: 0.65rem 0; border-top: 1px solid var(--line); }
+.lane .who { grid-row: span 2; }
+.lane .who b { display: block; font: 600 0.92rem var(--mono); color: var(--lane); }
+.lane .who small { color: var(--mute); font-size: 0.74rem; }
+.road { display: flex; align-items: center; gap: 0.6rem; height: 22px; }
+.road .bar { height: 14px; width: 0; border-radius: 3px; background: var(--lane); transition: width 0.12s linear;
+  box-shadow: 0 0 14px -2px var(--lane); }
+.lane.running .bar { background: repeating-linear-gradient(110deg, var(--lane) 0 10px,
+  color-mix(in srgb, var(--lane) 70%, #fff) 10px 14px); }
+.rate { font: 700 0.92rem var(--mono); color: var(--ink); white-space: nowrap; }
+.stats { display: flex; gap: 1.1rem; font: 0.74rem var(--mono); color: var(--mute); }
+.stats b { color: var(--ink-2); font-weight: 600; }
+.lane .stats .server { color: var(--lane); }
+
+/* Facts */
+.facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin: 1rem 0 0; }
+.facts div { padding: 0.9rem 1rem; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); }
+.facts dt { font: 700 1.6rem var(--mono); color: var(--copper-2); letter-spacing: -0.02em; }
+.facts dd { margin: 0.2rem 0 0; color: var(--ink-2); font-size: 0.86rem; }
 
 .flow { padding-left: 1.2rem; }
 .flow li { margin: 0.45rem 0; }
@@ -194,7 +242,10 @@ button:hover { filter: brightness(1.08); }
   dl dd { margin: 0 0 0.8rem; }
   .book form { grid-template-columns: 1fr; }
   .turn a { min-width: 0; flex: 1; }
-  .stopwatch { grid-template-columns: 1fr; }
-  .lanes .bar { display: none; }
+  .clock { grid-template-columns: 1fr; gap: 1rem; }
+  .legend { grid-template-columns: repeat(2, 1fr); }
+  .facts { grid-template-columns: 1fr; }
+  .lane { grid-template-columns: 1fr; }
+  .lane .who { grid-row: auto; }
   .quest li { padding-left: 3.4rem; }
 }
