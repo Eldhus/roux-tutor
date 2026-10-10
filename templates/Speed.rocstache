@@ -46,14 +46,7 @@
       <div></div>
       <div class="side raw"><b>roux-load</b><small>io_uring, 64 connections</small></div>
     </div>
-    <div class="axis">
-      <div class="ticks browser" data-roux="axis-browser"></div>
-      <div></div>
-      <div class="ticks raw" data-roux="axis-raw"></div>
-    </div>
     <div class="duel-rows" data-roux="duel-rows"></div>
-    <p class="scale-note">Two scales: each side has its own, and the right one is hundreds of
-    times longer. The badge is how many times faster.</p>
   </div>
 
   <p class="note" data-roux="race-note">Your browser keeps six connections a site (live reload

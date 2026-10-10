@@ -102,29 +102,39 @@
     drawHistory();
   })();
 
-  // ── The drag race: one chart, two scales ────────────────────────────────
+  // ── The drag race: one chart, two scales a unit ─────────────────────────
   // Each lane is raced by the browser, then by roux-load (through roux dev's
   // /_dev/race). The browser's bar grows left on its scale, roux-load's
-  // right on its own, hundreds of times longer; the badge is the ratio.
+  // right on its own.
+  // Requests a second and events a second each have their own axes.
+  const units = { requests: "requests a second", events: "events a second" };
   const lanes = [
-    { name: "static file", note: "the host alone, no Roc", url: "/favicon.svg" },
-    { name: "template", note: "the menu, rendered", url: "/race/page" },
-    { name: "SQLite", note: "a query, then text", url: "/race/db" },
-    { name: "Datastar", note: "a stream, one patch", url: "/race/patch", stream: true },
+    { name: "static file", note: "the host alone, no Roc", url: "/favicon.svg", unit: "requests" },
+    { name: "template", note: "the menu, rendered", url: "/race/page", unit: "requests" },
+    { name: "SQLite", note: "a query, then text", url: "/race/db", unit: "requests" },
+    { name: "Datastar", note: "patches, 1,000 a stream", url: "/race/stream", unit: "events", stream: true },
   ];
   const results = lanes.map(() => ({ browser: 0, raw: 0 }));
 
+  const axes = {};
   const rows = lanes.map((lane, i) => {
+    if (!axes[lane.unit]) {
+      const axis = document.createElement("div");
+      axis.className = "axis";
+      axis.innerHTML = `<div class="ticks browser"></div><div class="unit">${units[lane.unit]}</div>` +
+        `<div class="ticks raw"></div>`;
+      $("duel-rows").append(axis);
+      axes[lane.unit] = axis;
+    }
     const row = document.createElement("div");
     row.className = "duel-row";
     row.style.setProperty("--lane", `var(--lane-${i})`);
     row.innerHTML =
       `<div class="half browser"><span class="figure"><b class="n">–</b><small class="sub"></small></span>` +
       `<span class="bar"></span></div>` +
-      `<div class="name"><b>${lane.name}</b><small>${lane.note}</small><i class="ratio"></i></div>` +
+      `<div class="name"><b>${lane.name}</b><small>${lane.note}</small></div>` +
       `<div class="half raw"><span class="bar"></span>` +
-      `<span class="figure"><b class="n">${lane.stream ? "a stream" : "–"}</b><small class="sub">` +
-      `${lane.stream ? "roux-load reads\nplain answers" : ""}</small></span></div>`;
+      `<span class="figure"><b class="n">–</b><small class="sub"></small></span></div>`;
     $("duel-rows").append(row);
     return row;
   });
@@ -137,21 +147,24 @@
   };
   const compact = (x) => x >= 1e6 ? `${+(x / 1e6).toFixed(1)}M` : x >= 1e3 ? `${+(x / 1e3).toFixed(0)}k` : `${Math.round(x)}`;
   const draw = () => {
-    const most = {
-      browser: roundUp(Math.max(100, ...results.map((r) => r.browser))),
-      raw: roundUp(Math.max(1000, ...results.map((r) => r.raw))),
-    };
-    for (const side of ["browser", "raw"]) {
-      $(`axis-${side}`).innerHTML = [0, 0.5, 1].map((f) =>
-        `<span style="--at:${f * 100}%">${compact(f * most[side])}</span>`).join("");
+    const most = {};
+    for (const [unit, axis] of Object.entries(axes)) {
+      const of = (side) => results.filter((_, i) => lanes[i].unit === unit).map((r) => r[side]);
+      most[unit] = {
+        browser: roundUp(Math.max(100, ...of("browser"))),
+        raw: roundUp(Math.max(1000, ...of("raw"))),
+      };
+      for (const side of ["browser", "raw"]) {
+        axis.querySelector(`.ticks.${side}`).innerHTML = [0, 0.5, 1].map((f) =>
+          `<span style="--at:${f * 100}%">${compact(f * most[unit][side])}</span>`).join("");
+      }
     }
     results.forEach((r, i) => {
       for (const side of ["browser", "raw"]) {
-        part(i, side, "bar").style.width = `${(100 * r[side] / most[side]).toFixed(2)}%`;
+        const scale = most[lanes[i].unit][side];
+        part(i, side, "bar").style.width = `${(100 * r[side] / scale).toFixed(2)}%`;
         if (r[side] > 0) part(i, side, "n").textContent = Math.round(r[side]).toLocaleString();
       }
-      const ratio = rows[i].querySelector(".ratio");
-      ratio.textContent = r.browser > 0 && r.raw > 0 ? `×${Math.round(r.raw / r.browser).toLocaleString()}` : "";
     });
   };
   draw();
@@ -164,7 +177,83 @@
     const entries = performance.getEntriesByName(url);
     return entries[entries.length - 1]?.serverTiming?.find((t) => t.name === "roux")?.duration;
   };
+  // Server-sent events counted as roux-load counts them (the format's
+  // rules): lines end in CRLF, LF or CR; a blank line after a data field
+  // is one event. Fed text as it arrives, split anywhere.
+  const eventCounter = () => {
+    let line = "";
+    let afterCr = false;
+    let hasData = false;
+    return (text) => {
+      let events = 0;
+      for (const c of text) {
+        if (afterCr) {
+          afterCr = false;
+          if (c === "\n") continue;
+        }
+        if (c !== "\r" && c !== "\n") {
+          // Only a line's field name matters: keep its first five characters.
+          if (line.length < 5) line += c;
+          continue;
+        }
+        afterCr = c === "\r";
+        if (line === "") {
+          if (hasData) events++;
+          hasData = false;
+        } else if (line === "data" || line.startsWith("data:")) {
+          hasData = true;
+        }
+        line = "";
+      }
+      return events;
+    };
+  };
+
+  // A stream lane: four streams open at a time, each read to its end and
+  // asked again, until two seconds are up; the rate is events a second.
+  const raceBrowserStream = async (i) => {
+    const url = new URL(lanes[i].url, location.href).href;
+    let events = 0;
+    let streams = 0;
+    let starved = false;
+    const started = performance.now();
+    const until = started + 2000;
+    const worker = async () => {
+      while (performance.now() < until && !starved) {
+        const stop = new AbortController();
+        const late = setTimeout(() => stop.abort(), 3000);
+        try {
+          const answer = await fetch(url, { cache: "no-store", signal: stop.signal });
+          clearTimeout(late);
+          const reader = answer.body.pipeThrough(new TextDecoderStream()).getReader();
+          const count = eventCounter();
+          for (;;) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            events += count(value);
+            if (performance.now() >= until) { await reader.cancel(); break; }
+          }
+          streams++;
+        } catch {
+          clearTimeout(late);
+          starved = true;
+        }
+      }
+    };
+    const tick = () => {
+      results[i].browser = events / Math.max(0.001, (performance.now() - started) / 1000);
+      part(i, "browser", "sub").textContent = `${streams.toLocaleString()} streams`;
+      draw();
+    };
+    const ticker = setInterval(tick, 120);
+    await Promise.all(Array.from({ length: 4 }, worker));
+    clearInterval(ticker);
+    tick();
+    return !starved;
+  };
+
   const raceBrowser = async (i) => {
+    if (lanes[i].stream) return raceBrowserStream(i);
     const url = new URL(lanes[i].url, location.href).href;
     const times = [];
     const servers = [];
@@ -189,7 +278,9 @@
       if (s !== undefined) servers.push(s);
       const sorted = [...times].sort((a, b) => a - b);
       const p50 = sorted.length ? `p50 ${ms(quantile(sorted, 0.5))}` : "";
-      const server = servers.length ? `\napp ${ms([...servers].sort((a, b) => a - b)[servers.length >> 1])}` : "";
+      // A static file is the host's alone: no app time to say.
+      const server = lanes[i].url === "/favicon.svg" ? "\nno app" :
+        servers.length ? `\napp ${ms([...servers].sort((a, b) => a - b)[servers.length >> 1])}` : "";
       part(i, "browser", "sub").textContent = p50 + server;
       draw();
     };
@@ -209,7 +300,8 @@
     // 409: another race is on (another tab's); wait it out, a few times.
     for (let tries = 0; tries < 20; tries++) {
       try {
-        started = await fetch(`/_dev/race?paths=${lanes[i].url}`, { method: "POST" });
+        const mode = lanes[i].stream ? "&mode=events" : "";
+        started = await fetch(`/_dev/race?paths=${lanes[i].url}${mode}`, { method: "POST" });
       } catch {}
       if (started?.status !== 409) break;
       await sleep(500);
@@ -221,6 +313,14 @@
       try { state = await (await fetch("/_dev/race", { cache: "no-store" })).json(); } catch { return null; }
       if (!state.loader) return null;
       const result = state.lanes[0]?.result;
+      if (result && lanes[i].stream) {
+        // A roux older than the events mode answers with requests.
+        if (result.events_per_second === undefined) return null;
+        results[i].raw = result.events_per_second;
+        part(i, "raw", "sub").textContent = `${result.streams.toLocaleString()} streams`;
+        draw();
+        return result;
+      }
       if (result) {
         results[i].raw = result.requests_per_second;
         part(i, "raw", "sub").textContent = `p50 ${ms(result.p50_us / 1000)}\np99 ${ms(result.p99_us / 1000)}`;
@@ -239,7 +339,6 @@
     rows.forEach((row, i) => {
       row.classList.remove("raced");
       for (const side of ["browser", "raw"]) {
-        if (side === "raw" && lanes[i].stream) continue;
         part(i, side, "n").textContent = "–";
         part(i, side, "sub").textContent = "";
       }
@@ -258,10 +357,9 @@
         rows[i].classList.remove("running");
         break;
       }
-      if (!lanes[i].stream) {
-        rows[i].dataset.side = "raw";
-        if ((await raceRaw(i)) === null) note = "roux-load races under ./roux dev: run it there to see the right side.";
-      }
+      rows[i].dataset.side = "raw";
+      const raw = await raceRaw(i);
+      if (raw === null) note = "roux-load races under ./roux dev: run it there to see the right side.";
       rows[i].classList.remove("running");
       // Not "done": the Start page's boxed card has that class.
       rows[i].classList.add("raced");

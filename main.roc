@@ -1,4 +1,4 @@
-app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.2.4/6CCriLUsboafQkm7i6AjZCMjhrVyosVK5kDJgMS3Rcq5.tar.zst" }
+app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.2.5/6YNALS838J9D7cL1QpYPE4dgSdBZcSkVkB6rdhV3SL3x.tar.zst" }
 
 ## roux-tutor: the tutorial is this app. Every page you read is a template
 ## in templates/, filled from the Roc below, and `./roux dev main.roc` puts
@@ -50,6 +50,11 @@ Context : { db : Sqlite.Db }
 
 program = { init!, respond! }
 
+## The Speed page's Datastar lane: patches a stream, as fast as they go;
+## the racers ask for the next stream when one ends.
+race_stream_patches : I64
+race_stream_patches = 1000
+
 ## Once, at start: the database (made from db/schema.sql the first time).
 init! : () => Try({ config : Server.Config, context : Context }, [Exit(I64), DbErr(Sqlite.Err)])
 init! = || {
@@ -74,9 +79,11 @@ respond! = |request, { db }| {
 			{ count } = Likes.count!(Sqlite.read(db, request))?
 			Ok(Server.text("${count.to_str()} likes"))
 		}
-		("GET", "/race/patch") => {
+		("GET", "/race/stream") => {
 			stream = Sse.start!(request, [])?
-			Sse.send!(stream, Rocstache.patch!(LikeCount.template({ count: 7 })))?
+			for count in 1..=race_stream_patches {
+				Sse.send!(stream, Rocstache.patch!(LikeCount.template({ count: count })))?
+			}
 			Sse.end!(stream)
 		}
 		("GET", _) =>
