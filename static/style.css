@@ -234,7 +234,8 @@ button:hover { filter: brightness(1.08); }
 .half.browser .figure { text-align: right; }
 .figure .n { font: 700 1.02rem var(--mono); color: var(--ink); white-space: nowrap; }
 .half.raw .figure .n { font-size: 1.2rem; color: var(--lane); text-shadow: 0 0 16px color-mix(in srgb, var(--lane) 45%, transparent); }
-.figure .sub { color: var(--mute); font: 0.66rem var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Two short lines (p50, then app or p99), never cut off. */
+.figure .sub { color: var(--mute); font: 0.66rem var(--mono); white-space: pre; line-height: 1.35; }
 .duel-row.running[data-side="browser"] .half.browser .bar,
 .duel-row.running[data-side="raw"] .half.raw .bar { min-width: 2.5rem; background: repeating-linear-gradient(110deg,
   var(--lane) 0 10px, color-mix(in srgb, var(--lane) 70%, #fff) 10px 14px); }

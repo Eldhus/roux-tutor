@@ -108,7 +108,6 @@
   // right on its own, hundreds of times longer; the badge is the ratio.
   const lanes = [
     { name: "static file", note: "the host alone, no Roc", url: "/favicon.svg" },
-    { name: "Roc text", note: "a handler, no template", url: "/race/text" },
     { name: "template", note: "the menu, rendered", url: "/race/page" },
     { name: "SQLite", note: "a query, then text", url: "/race/db" },
     { name: "Datastar", note: "a stream, one patch", url: "/race/patch", stream: true },
@@ -125,7 +124,7 @@
       `<div class="name"><b>${lane.name}</b><small>${lane.note}</small><i class="ratio"></i></div>` +
       `<div class="half raw"><span class="bar"></span>` +
       `<span class="figure"><b class="n">${lane.stream ? "a stream" : "–"}</b><small class="sub">` +
-      `${lane.stream ? "roux-load reads plain answers" : ""}</small></span></div>`;
+      `${lane.stream ? "roux-load reads\nplain answers" : ""}</small></span></div>`;
     $("duel-rows").append(row);
     return row;
   });
@@ -190,7 +189,7 @@
       if (s !== undefined) servers.push(s);
       const sorted = [...times].sort((a, b) => a - b);
       const p50 = sorted.length ? `p50 ${ms(quantile(sorted, 0.5))}` : "";
-      const server = servers.length ? ` · app ${ms([...servers].sort((a, b) => a - b)[servers.length >> 1])}` : "";
+      const server = servers.length ? `\napp ${ms([...servers].sort((a, b) => a - b)[servers.length >> 1])}` : "";
       part(i, "browser", "sub").textContent = p50 + server;
       draw();
     };
@@ -224,7 +223,7 @@
       const result = state.lanes[0]?.result;
       if (result) {
         results[i].raw = result.requests_per_second;
-        part(i, "raw", "sub").textContent = `p50 ${ms(result.p50_us / 1000)} · p99 ${ms(result.p99_us / 1000)}`;
+        part(i, "raw", "sub").textContent = `p50 ${ms(result.p50_us / 1000)}\np99 ${ms(result.p99_us / 1000)}`;
         draw();
         return result;
       }
@@ -238,7 +237,7 @@
     button.disabled = true;
     results.forEach((r) => { r.browser = 0; r.raw = 0; });
     rows.forEach((row, i) => {
-      row.classList.remove("done");
+      row.classList.remove("raced");
       for (const side of ["browser", "raw"]) {
         if (side === "raw" && lanes[i].stream) continue;
         part(i, side, "n").textContent = "–";
@@ -264,7 +263,8 @@
         if ((await raceRaw(i)) === null) note = "roux-load races under ./roux dev: run it there to see the right side.";
       }
       rows[i].classList.remove("running");
-      rows[i].classList.add("done");
+      // Not "done": the Start page's boxed card has that class.
+      rows[i].classList.add("raced");
     }
     if (note) $("race-note").textContent = note;
     lights.forEach((light) => light.className = "");

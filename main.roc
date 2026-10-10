@@ -96,7 +96,6 @@ page = |path|
 		["", "speed"] => Ok(Rocstache.html(Speed.template({ frame: frame("/speed"), nav: nav("/speed"), hello })))
 		["", "routes"] => Ok(Rocstache.html(Routes.template({ frame: frame("/routes"), nav: nav("/routes") })))
 		["", "ship"] => Ok(Rocstache.html(Ship.template({ frame: frame("/ship"), nav: nav("/ship") })))
-		["", "race", "text"] => Ok(Server.text("Hello from Roc"))
 		["", "race", "page"] => Ok(Rocstache.html(Menu.template({ dishes: dishes })))
 		# Routes: a route of your own goes here.
 		_ => Err(NotFound)
