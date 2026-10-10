@@ -33,18 +33,33 @@
 <section class="card" id="race">
   <div class="card-head">
     <h2>Drag race</h2>
-    <p>Five lanes, two seconds each, six requests at a time: the browser's limit per site.</p>
+    <p>The same lanes, raced two ways. Two seconds a lane.</p>
   </div>
-  <div class="start">
-    <button data-roux="go">Race</button>
-    <span class="lights" data-roux="lights"><i></i><i></i><i></i></span>
+
+  <div class="heat">
+    <div class="start">
+      <button data-roux="go">In your browser</button>
+      <span class="lights" data-roux="lights"><i></i><i></i><i></i></span>
+    </div>
+    <div class="lanes" data-roux="lanes"></div>
+    <p class="note" data-roux="browser-note">Four requests at a time: a browser keeps six
+    connections a site, and live reload holds one per tab. <b>server</b> is the app's own time
+    per request, from each answer's <code>Server-Timing</code> header: the rest of the round
+    trip is the browser.</p>
   </div>
-  <div class="lanes" data-roux="lanes"></div>
-  <p class="note">The bar is requests a second as your browser counts them; <b>server</b> is the
-  app's own time per request, from each answer's <code>Server-Timing</code> header under
-  <code>roux dev</code>. The gap between them is the browser. The serious race, with oha,
-  hundreds of connections and dedicated machines, runs every night at
-  <a href="https://fourneau.y2kbugger.com/">fourneau.y2kbugger.com</a>.</p>
+
+  <div class="heat">
+    <div class="start">
+      <button data-roux="out">From outside, with roux-load</button>
+      <span class="lights" data-roux="out-lights"><i></i><i></i><i></i></span>
+    </div>
+    <div class="lanes" data-roux="out-lanes"></div>
+    <p class="note" data-roux="out-note">roux dev runs <code>roux-load</code> against this app:
+    io_uring, 64 connections, two threads, nothing allocated while it runs. Under
+    <code>roux dev</code> the app has two shards; a built app uses every core. From a terminal:
+    <code>./roux load --port 8080 --path /race/page</code>. The serious race runs every night at
+    <a href="https://fourneau.y2kbugger.com/">fourneau.y2kbugger.com</a>.</p>
+  </div>
 </section>
 
 <section class="card">

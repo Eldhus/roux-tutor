@@ -1,4 +1,4 @@
-app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.2.3/cxK5z1GNVjsvVsbPn5VwXEsuY53DKCm2F98s2kKzQmB.tar.zst" }
+app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.2.4/6CCriLUsboafQkm7i6AjZCMjhrVyosVK5kDJgMS3Rcq5.tar.zst" }
 
 ## roux-tutor: the tutorial is this app. Every page you read is a template
 ## in templates/, filled from the Roc below, and `./roux dev main.roc` puts

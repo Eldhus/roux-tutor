@@ -206,6 +206,9 @@ button:hover { filter: brightness(1.08); }
   box-shadow: 0 0 14px -2px var(--lane); }
 .lane.running .bar { background: repeating-linear-gradient(110deg, var(--lane) 0 10px,
   color-mix(in srgb, var(--lane) 70%, #fff) 10px 14px); }
+.lane.running .bar { min-width: 3rem; }
+.lane.out .who b, .lane.out .rate { color: var(--mute); font-weight: 500; }
+.heat + .heat { margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px dashed var(--line); }
 .rate { font: 700 0.92rem var(--mono); color: var(--ink); white-space: nowrap; }
 .stats { display: flex; gap: 1.1rem; font: 0.74rem var(--mono); color: var(--mute); }
 .stats b { color: var(--ink-2); font-weight: 600; }
