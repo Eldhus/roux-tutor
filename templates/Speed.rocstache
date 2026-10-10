@@ -37,7 +37,7 @@
   </div>
   <div class="start">
     <button data-roux="go">Race</button>
-    <span class="lights" data-roux="lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+    <span class="lights" data-roux="lights" aria-hidden="true"><i></i><i></i><i></i><i class="green"></i></span>
   </div>
 
   <div class="duel" data-roux="duel">
