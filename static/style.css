@@ -74,10 +74,8 @@ pre.out { border-left: 3px solid var(--mute); color: var(--ink-2); }
 main { max-width: 800px; width: 100%; padding: 3.2rem 3rem 4rem; }
 header { margin-bottom: 2.2rem; padding-bottom: 1.6rem; position: relative; }
 header::after { content: ""; position: absolute; left: 0; bottom: 0; width: min(100%, 22rem); height: 2px;
-  border-radius: 2px; background: linear-gradient(90deg, var(--copper), var(--copper-2), transparent);
-  box-shadow: 0 0 14px color-mix(in srgb, var(--copper) 55%, transparent); }
-.kicker { margin: 0 0 0.4rem; color: var(--copper); font: 600 0.78rem var(--mono); text-transform: uppercase; letter-spacing: 0.16em;
-  text-shadow: 0 0 18px color-mix(in srgb, var(--copper) 50%, transparent); }
+  border-radius: 2px; background: linear-gradient(90deg, var(--copper), transparent); }
+.kicker { margin: 0 0 0.4rem; color: var(--copper); font: 600 0.78rem var(--mono); text-transform: uppercase; letter-spacing: 0.16em; }
 h1 { margin: 0; font: 600 clamp(2.4rem, 5vw, 3.6rem)/1.05 var(--serif); letter-spacing: -0.025em; }
 .hero h1 { font-size: clamp(2.8rem, 7vw, 4.8rem); }
 h1 code { font-size: 0.7em; }
@@ -106,7 +104,8 @@ section { margin: 2.2rem 0; }
 .menu li b { font: 600 0.95rem var(--mono); color: var(--copper-2); }
 .empty { color: var(--mute); font-style: italic; }
 
-dl.loop-table, dl.syntax { display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 1.2rem; margin: 1rem 0; }
+/* The term's column no wider than it must be, and never more than half. */
+dl.loop-table, dl.syntax { display: grid; grid-template-columns: fit-content(50%) 1fr; gap: 0.5rem 1.2rem; margin: 1rem 0; }
 dl dt { color: var(--ink); font-weight: 600; }
 dl dd { margin: 0; color: var(--ink-2); }
 
@@ -155,24 +154,28 @@ button:hover { filter: brightness(1.08); }
 /* Speed */
 .card { margin: 1.6rem 0; padding: 1.5rem 1.6rem; border: 1px solid var(--line); border-radius: 16px;
   background: linear-gradient(180deg, color-mix(in srgb, var(--bg-2) 92%, var(--copper)), var(--bg-2) 40%);
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 6%, transparent) inset, 0 18px 40px -28px #000; }
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 6%, transparent); }
 .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .card-head h2 { margin: 0; }
 .card-head p { margin: 0; color: var(--mute); font-size: 0.9rem; }
 .card .preview { margin: 1.3rem 0; background: var(--bg); }
 .card .preview figcaption { background: var(--bg-2); }
 .note { color: var(--mute); font-size: 0.86rem; margin: 1rem 0 0; }
+/* Under the race: fine print, and it looks it. */
+.fine { color: color-mix(in srgb, var(--mute) 80%, transparent); font-size: 0.74rem; line-height: 1.5;
+  margin: 1.2rem 0 0; }
+.fine code { font-size: 0.95em; }
 .note b { color: var(--ink-2); }
 .mono, .readout b, .legend dd, .rate, .stats b, .facts dt, .history li { font-variant-numeric: tabular-nums; }
 
 /* Save to pixels */
 .clock { display: grid; grid-template-columns: minmax(10rem, auto) 1fr; gap: 1.6rem; align-items: center; }
 .readout b { display: block; font: 700 clamp(2.6rem, 6vw, 3.6rem)/1 var(--mono); letter-spacing: -0.04em;
-  color: var(--copper-2); text-shadow: 0 0 24px color-mix(in srgb, var(--copper) 45%, transparent); }
+  color: var(--copper-2); }
 .readout small { color: var(--mute); font: 600 0.72rem var(--mono); text-transform: uppercase; letter-spacing: 0.14em; }
 .track { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--bg); border: 1px solid var(--line); }
 .track i, .mini i { display: block; height: 100%; transition: width 0.4s cubic-bezier(.2,.8,.2,1); }
-.p-roux { background: var(--p-roux); box-shadow: 0 0 12px var(--p-roux); }
+.p-roux { background: var(--p-roux); }
 .p-net { background: var(--p-net); }
 .p-ready { background: var(--p-ready); }
 .p-paint { background: var(--p-paint); }
@@ -191,10 +194,6 @@ button:hover { filter: brightness(1.08); }
 .start { display: flex; align-items: center; gap: 1rem; margin: 1.2rem 0 0.4rem; }
 .start button { padding: 0.65rem 1.5rem; font-size: 1rem; letter-spacing: 0.02em; }
 .start button:disabled { opacity: 0.55; cursor: default; }
-.lights { display: flex; gap: 0.45rem; }
-.lights i { width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 1px solid var(--line); transition: all 0.12s; }
-.lights i.on { background: #e5483a; border-color: #e5483a; box-shadow: 0 0 12px #e5483a; }
-.lights i.go { background: var(--ok); border-color: var(--ok); box-shadow: 0 0 12px var(--ok); }
 /* The duel: lanes down the middle, the browser's bars growing left on its
    scale, roux-load's right on its own; numbers at the outer edges. */
 /* Into the card's padding a little, and narrow labels: room for the bars. */
@@ -205,7 +204,7 @@ button:hover { filter: brightness(1.08); }
 .duel-head .side small { color: var(--mute); font-size: 0.74rem; }
 .duel-head .browser { text-align: right; }
 .duel-head .browser b { color: var(--ink-2); }
-.duel-head .raw b { color: var(--copper-2); text-shadow: 0 0 14px color-mix(in srgb, var(--copper) 55%, transparent); }
+.duel-head .raw b { color: var(--copper-2); }
 .axis { margin: 0.7rem 0 0.2rem; height: 1.2rem; }
 .axis .unit { align-self: end; text-align: center; font: 0.66rem var(--mono); color: var(--mute);
   text-transform: uppercase; letter-spacing: 0.08em; }
@@ -227,18 +226,19 @@ button:hover { filter: brightness(1.08); }
 .half .bar { height: 18px; width: 0; transition: width 0.15s linear; }
 .half.browser .bar { justify-self: end; border-radius: 4px 0 0 4px;
   background: color-mix(in srgb, var(--lane) 45%, var(--bg)); border: 1px solid color-mix(in srgb, var(--lane) 60%, transparent); border-right: 0; }
-.half.raw .bar { justify-self: start; border-radius: 0 4px 4px 0; background: var(--lane);
-  box-shadow: 0 0 18px -3px var(--lane); }
+.half.raw .bar { justify-self: start; border-radius: 0 4px 4px 0; background: var(--lane); }
 .figure { display: grid; gap: 0.05rem; }
 .half.browser .figure { text-align: right; }
 .figure .n { font: 700 1.02rem var(--mono); color: var(--ink); white-space: nowrap; }
-.half.raw .figure .n { font-size: 1.2rem; color: var(--lane); text-shadow: 0 0 16px color-mix(in srgb, var(--lane) 45%, transparent); }
+.half.raw .figure .n { font-size: 1.2rem; color: var(--lane); }
 /* Two short lines (p50, then app or p99), never cut off. */
 .figure .sub { color: var(--mute); font: 0.66rem var(--mono); white-space: pre; line-height: 1.35;
   min-height: 2.7em; /* both lines' room from the start: no jump when they arrive */ }
+/* The side being raced: its bar breathes, quietly. */
 .duel-row.running[data-side="browser"] .half.browser .bar,
-.duel-row.running[data-side="raw"] .half.raw .bar { min-width: 2.5rem; background: repeating-linear-gradient(110deg,
-  var(--lane) 0 10px, color-mix(in srgb, var(--lane) 70%, #fff) 10px 14px); }
+.duel-row.running[data-side="raw"] .half.raw .bar { min-width: 1.5rem; animation: racing 1.2s ease-in-out infinite; }
+@keyframes racing { 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { .duel-row .bar { animation: none !important; transition: none; } }
 
 /* Facts */
 .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin: 1rem 0 0; }

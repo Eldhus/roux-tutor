@@ -3,7 +3,7 @@
   <p class="kicker">Speed</p>
   <h1>Measured here, now.</h1>
   <p class="lede">Not a benchmark: your machine, your browser, this app. Save a template and
-  watch the clock; race four kinds of request.</p>
+  watch the clock; race your browser against roux-load.</p>
 </header>
 
 <section class="card" id="edit">
@@ -37,7 +37,6 @@
   </div>
   <div class="start">
     <button data-roux="go">Race</button>
-    <span class="lights" data-roux="lights"><i></i><i></i><i></i></span>
   </div>
 
   <div class="duel" data-roux="duel">
@@ -49,12 +48,9 @@
     <div class="duel-rows" data-roux="duel-rows"></div>
   </div>
 
-  <p class="note" data-roux="race-note">Your browser keeps six connections a site (live reload
-  holds one per tab), and most of each round trip is its own work; the app's share, from each
-  answer's <code>Server-Timing</code> header, shows under its bar. roux-load is fourneau's load
-  generator, run by roux dev against this app: under <code>roux dev</code> the app has two
-  shards, a built app uses every core. From a terminal: <code>./roux load --port 8080 --path
-  /race/page</code>. The serious race runs every night at
+  <p class="note" data-roux="race-note" hidden></p>
+  <p class="fine">"app" is the app's own time, from <code>Server-Timing</code>. Under
+  <code>roux dev</code> the app gets two cores; a build gets them all. Nightly races:
   <a href="https://fourneau.y2kbugger.com/">fourneau.y2kbugger.com</a>.</p>
 </section>
 

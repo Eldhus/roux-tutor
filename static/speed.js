@@ -333,8 +333,9 @@
 
   $("go").addEventListener("click", async (event) => {
     const button = event.currentTarget;
-    const lights = [...$("lights").children];
     button.disabled = true;
+    button.textContent = "Racing…";
+    $("race-note").hidden = true;
     results.forEach((r) => { r.browser = 0; r.raw = 0; });
     rows.forEach((row, i) => {
       row.classList.remove("raced");
@@ -344,9 +345,6 @@
       }
     });
     draw();
-    lights.forEach((light) => light.className = "");
-    for (const light of lights) { light.className = "on"; await sleep(320); }
-    lights.forEach((light) => light.className = "go");
     let note = null;
     for (let i = 0; i < lanes.length; i++) {
       rows[i].classList.add("running");
@@ -364,8 +362,10 @@
       // Not "done": the Start page's boxed card has that class.
       rows[i].classList.add("raced");
     }
-    if (note) $("race-note").textContent = note;
-    lights.forEach((light) => light.className = "");
+    if (note) {
+      $("race-note").textContent = note;
+      $("race-note").hidden = false;
+    }
     button.disabled = false;
     button.textContent = "Race again";
   });
