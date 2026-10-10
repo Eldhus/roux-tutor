@@ -345,6 +345,12 @@
       }
     });
     draw();
+    // A Formula 1 start: five reds, one a beat, a held breath, then all
+    // out at once: the race is on.
+    const lights = [...$("lights").children];
+    for (const light of lights) { light.classList.add("on"); await sleep(300); }
+    await sleep(400 + Math.random() * 500);
+    lights.forEach((light) => light.classList.remove("on"));
     let note = null;
     for (let i = 0; i < lanes.length; i++) {
       rows[i].classList.add("running");

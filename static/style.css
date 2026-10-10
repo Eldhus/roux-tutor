@@ -194,6 +194,18 @@ button:hover { filter: brightness(1.08); }
 .start { display: flex; align-items: center; gap: 1rem; margin: 1.2rem 0 0.4rem; }
 .start button { padding: 0.65rem 1.5rem; font-size: 1rem; letter-spacing: 0.02em; }
 .start button:disabled { opacity: 0.55; cursor: default; }
+/* The start lights: five lenses in a dark housing; lit, each is a red
+   bulb with a hot centre and a little bloom; out, smoked glass. */
+.lights { display: flex; gap: 0.4rem; padding: 0.45rem 0.6rem; border-radius: 999px;
+  background: linear-gradient(180deg, #2a201c, #120d0b); border: 1px solid #3a2c25;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 6px rgba(0, 0, 0, 0.25); }
+.lights i { width: 14px; height: 14px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #4a2a26, #1d1210 70%);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8); transition: background 0.06s, box-shadow 0.06s; }
+.lights i.on { background: radial-gradient(circle at 35% 30%, #fff1ea, #ff4b3a 35%, #b5150d 75%);
+  box-shadow: 0 0 6px #ff3b2b, 0 0 16px rgba(255, 59, 43, 0.55); }
+/* All out at once is the start: no fade. */
+.lights:not(:has(.on)) i { transition: none; }
 /* The duel: lanes down the middle, the browser's bars growing left on its
    scale, roux-load's right on its own; numbers at the outer edges. */
 /* Into the card's padding a little, and narrow labels: room for the bars. */
