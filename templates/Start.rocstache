@@ -1,0 +1,43 @@
+{{> Top frame}}
+<header class="hero">
+  <p class="kicker">roux · a Roc platform for the web</p>
+  <h1>Cook a web app in&nbsp;Roc.</h1>
+  <p class="lede">This page is a roux app, and you are about to change it. Two minutes,
+  three edits. Keep your editor beside this tab; it updates itself when you save.</p>
+</header>
+
+<figure class="preview">
+  <figcaption><code>templates/Hello.rocstache</code>, rendered</figcaption>
+{{> Hello hello}}</figure>
+
+<ol class="quest">
+  <li>
+    <h2>Change the markup</h2>
+    <p>Open <code>templates/Hello.rocstache</code>, change <em>Hello</em> to anything, save.
+    The box above changes before you look back: roux makes new bytecode and the running
+    app swaps it in. No compiler, no restart.</p>
+  </li>
+  <li>
+    <h2>Change the Roc</h2>
+    <p>In <code>main.roc</code>, under <em>Your turn</em>, set <code>you = "friend"</code> to your
+    name. That is Roc: roc compiles it and the app restarts, in about a second.</p>
+  </li>
+  <li>
+    <h2>Break it on purpose</h2>
+    <p>In the template, after the name, add <code>from &#123;&#123; city &#125;&#125;</code>. roc stops
+    you, over this page:</p>
+    <pre class="out"><code>hello = { name: you }
+Hint: This record is missing the field: city</code></pre>
+    <p>The template now reads a field your Roc does not give. Give it one in
+    <code>main.roc</code>: <code>hello = { name: you, city: "Reykjavík" }</code>. Fixed.</p>
+  </li>
+</ol>
+
+<section class="done">
+  <h2>That is roux</h2>
+  <p>Templates and Roc agree by type, checked as you save. Markup lands in milliseconds,
+  Roc in a second, mistakes over the page while the last good build keeps serving. The
+  whole app ships as one small file.</p>
+  <p class="actions"><a class="go" href="/speed">See how fast →</a> <a href="/templates">or go deeper</a></p>
+</section>
+{{> Bottom nav}}

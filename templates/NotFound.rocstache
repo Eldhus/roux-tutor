@@ -3,7 +3,7 @@
   <p class="kicker">404</p>
   <h1>Nothing at <code>{{ path }}</code>.</h1>
   <p class="lede">No branch of <code>page</code> or <code>respond!</code> in <code>main.roc</code>
-  matches this path. Lesson 5 adds one.</p>
+  matches this path. <a href="/routes">Routes</a> shows how to add one.</p>
 </header>
 <nav class="turn">
   <a class="next" href="/routes"><small>to</small>Routes</a>

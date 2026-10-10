@@ -12,8 +12,12 @@
 <nav class="rail">
   <a class="brand" href="/"><img src="/favicon.svg" alt=""><span>roux</span><small>tutor</small></a>
   <ol>
-{{#lessons}}    <li{{?current}} class="here"{{/current}}><a href="{{ href }}"><b>{{ number }}</b>{{ name }}</a></li>
-{{/lessons}}  </ol>
+{{#start}}    <li{{?current}} class="here"{{/current}}><a href="{{ href }}"><b>{{ number }}</b>{{ name }}</a></li>
+{{/start}}  </ol>
+  <p class="tier">Go deeper</p>
+  <ol class="deeper">
+{{#deeper}}    <li{{?current}} class="here"{{/current}}><a href="{{ href }}"><b>{{ number }}</b>{{ name }}</a></li>
+{{/deeper}}  </ol>
   <p class="loop"><span class="dot"></span> <code>./roux dev main.roc</code></p>
 </nav>
 <main>

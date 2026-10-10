@@ -1,6 +1,6 @@
 {{> Top frame}}
 <header>
-  <p class="kicker">Lesson 8</p>
+  <p class="kicker">Go deeper</p>
   <h1>Live</h1>
   <p class="lede">Hypermedia: the server sends HTML, and a few attributes make the page
   live. No JavaScript of yours; <a href="https://data-star.dev">Datastar</a> does the

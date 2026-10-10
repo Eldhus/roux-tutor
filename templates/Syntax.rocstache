@@ -1,0 +1,51 @@
+{{> Top frame}}
+<header>
+  <p class="kicker">Go deeper</p>
+  <h1>Templates</h1>
+  <p class="lede">HTML with a few tags in double braces, compiled to bytecode the server
+  runs. Each template's contract is a Roc type, written for you.</p>
+</header>
+
+<figure class="preview">
+  <figcaption><code>templates/Menu.rocstache</code>, rendered</figcaption>
+{{> Menu menu}}</figure>
+
+<section class="turn-box">
+  <h2>Your turn</h2>
+  <ol class="steps">
+    <li><p>In <code>main.roc</code>, add a dish to <code>dishes</code>:
+    <code>{ name: "Hollandaise", price: 280 },</code></p></li>
+    <li><p>Write that price as <code>"280"</code>. <code>Menu.rocstache</code> declares
+    <code>price : U32</code> at its top, so roc refuses a string, at that line.</p></li>
+    <li><p>Empty the list, <code>dishes = []</code>, and the inverted section shows.</p></li>
+  </ol>
+</section>
+
+<section>
+  <h2>The tags</h2>
+  <dl class="syntax">
+    <dt><code>&#123;&#123; name &#125;&#125;</code></dt><dd>a field, HTML-escaped; <code>&#123;&#123;&#123; name &#125;&#125;&#125;</code> raw</dd>
+    <dt><code>&#123;&#123;#dishes&#125;&#125; … &#123;&#123;/dishes&#125;&#125;</code></dt><dd>once per element of a list (or once for a true Bool), its fields in scope</dd>
+    <dt><code>&#123;&#123;^dishes&#125;&#125; … &#123;&#123;/dishes&#125;&#125;</code></dt><dd>when the list is empty, or the Bool false</dd>
+    <dt><code>&#123;&#123; dishes | len | plural "dish" "dishes" &#125;&#125;</code></dt><dd>formatters: <code>len</code>, <code>plural</code>, <code>upper</code>, <code>lower</code>, <code>url</code></dd>
+    <dt><code>&#123;&#123;&gt; Hello hello&#125;&#125;</code></dt><dd>another template, given a field as its data (how every page here shares its sidebar)</dd>
+    <dt><code>&#123;&#123;% Ctx : &#123; … &#125; %&#125;&#125;</code></dt><dd>the contract, declared, first in the file: for numbers and Bools</dd>
+  </dl>
+  <p>Anything fancier is computed in Roc and handed over as a field: templates stay
+  simple, and the logic stays where the types are.</p>
+</section>
+
+<section>
+  <h2>The contract roux writes</h2>
+  <p>roux reads each template and writes a Roc module beside it. This is
+  <code>templates/Hello.roc</code>, as it is right now; <code>main.roc</code> imports it as
+  <code>templates/Hello</code>:</p>
+  <pre class="file"><code>{{ generated }}</code></pre>
+  <p><code>Ctx</code> is what the template reads. <code>Hello.template(ctx)</code> makes the
+  template's value: data, rendered by the server as the response goes out, which is why a
+  test can compare it. roux rewrites the module only when the contract changes, so a
+  markup edit leaves your Roc alone and needs no compiler.</p>
+  <p>Annotating a record with the contract, as <code>main.roc</code> does with
+  <code>hello : Hello.Ctx</code>, puts any mismatch on the line where the record is made.</p>
+</section>
+{{> Bottom nav}}

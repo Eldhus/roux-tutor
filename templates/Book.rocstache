@@ -1,6 +1,6 @@
 {{> Top frame}}
 <header>
-  <p class="kicker">Lesson 7</p>
+  <p class="kicker">Go deeper</p>
   <h1>Database</h1>
   <p class="lede">SQLite inside the server, and SQL that is typed: roux-db reads your queries
   and writes Roc functions for them.</p>

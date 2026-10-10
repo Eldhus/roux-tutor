@@ -1,0 +1,49 @@
+{{> Top frame}}
+<header>
+  <p class="kicker">Speed</p>
+  <h1>Measured here, now.</h1>
+  <p class="lede">Not a benchmark: your machine, your browser, this app. Edit something and
+  watch the clock; race a few kinds of request.</p>
+</header>
+
+<section class="card" id="edit">
+  <h2>Save to screen</h2>
+  <p>Edit <code>templates/Hello.rocstache</code> and save. This page reloads and times what
+  happened, from roux noticing your save to this page painted.</p>
+  <figure class="preview">
+    <figcaption><code>templates/Hello.rocstache</code>, rendered</figcaption>
+{{> Hello hello}}  </figure>
+  <div class="stopwatch">
+    <div><b data-roux="server">–</b><small>roux: save seen to app told</small></div>
+    <div><b data-roux="browser">–</b><small>browser: told to painted</small></div>
+    <div class="total"><b data-roux="total">–</b><small>save to screen</small></div>
+  </div>
+  <ol class="history" data-roux="history"></ol>
+  <p class="note" data-roux="note">Waiting for your first save.</p>
+</section>
+
+<section class="card" id="race">
+  <h2>A drag race in your browser</h2>
+  <p>Five lanes, two seconds each, as many requests as the browser will make (six at a
+  time: that is its limit per site). The server's own time comes back in each answer's
+  <code>Server-Timing</code> header, under <code>roux dev</code>.</p>
+  <button data-roux="go">Race</button>
+  <table class="lanes">
+    <thead><tr><th>lane</th><th></th><th>req/s</th><th>p50</th><th>p99</th><th>server</th></tr></thead>
+    <tbody data-roux="lanes"></tbody>
+  </table>
+  <p class="note">Your browser is the bottleneck here: most of each round trip is its own.
+  The serious race, with oha, hundreds of connections and dedicated machines, runs every
+  night at <a href="https://fourneau.y2kbugger.com/">fourneau.y2kbugger.com</a>.</p>
+</section>
+
+<section class="card">
+  <h2>Small, and quick to build</h2>
+  <dl class="loop-table">
+    <dt>a markup edit</dt><dd>no compiler: the bytecode is made in well under a millisecond</dd>
+    <dt>a Roc edit</dt><dd data-roux="roc">roc compiles, the app restarts: about a second</dd>
+    <dt><code>./roux build main.roc</code></dt><dd>one file of about 3 MB, the whole app optimized</dd>
+  </dl>
+</section>
+<script src="/speed.js"></script>
+{{> Bottom nav}}

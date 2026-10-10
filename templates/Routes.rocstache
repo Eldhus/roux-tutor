@@ -1,38 +1,49 @@
 {{> Top frame}}
 <header>
-  <p class="kicker">Lesson 5</p>
-  <h1>Routes</h1>
-  <p class="lede">There is no router to learn. A request's path is a string; Roc's
-  <code>match</code> picks the page.</p>
+  <p class="kicker">Go deeper</p>
+  <h1>Routes and tests</h1>
+  <p class="lede">A request's path is a string, and Roc's <code>match</code> picks the page.
+  A page is a value until it is sent, so a test compares it whole.</p>
 </header>
 
 <section>
-  <p>Try these links. They are not pages yet:
+  <p>These are not pages yet:
   <a class="pill" href="/greet/Ada">/greet/Ada</a>
   <a class="pill" href="/greet/Grace">/greet/Grace</a></p>
 </section>
 
 <section class="turn-box">
   <h2>Your turn</h2>
-  <p>In <code>main.roc</code>, find <code>page</code>. Each branch matches a path split on
-  <code>/</code>. Where it says <em>a route of your own goes here</em>, add:</p>
-  <pre><code>["", "greet", name] =&gt; Ok(Rocstache.html(Greeting.template({ frame: frame("/routes"), name })))</code></pre>
-  <p>Save, then follow the links again. <code>name</code> is whatever the path holds there:
-  a pattern binds it.</p>
+  <ol class="steps">
+    <li><p>In <code>main.roc</code>, find <code>page</code>. Where it says <em>a route of your own
+    goes here</em>, add:</p>
+    <pre><code>["", "greet", name] =&gt; Ok(Rocstache.html(Greeting.template({ frame: frame("/routes"), name })))</code></pre>
+    <p>Follow the links again. The pattern binds <code>name</code> to that part of the path.</p></li>
+    <li><p>At the bottom of <code>main.roc</code>, test it:</p>
+    <pre><code>expect page("/greet/Ada") == Ok(Rocstache.html(Greeting.template({ frame: frame("/routes"), name: "Ada" })))</code></pre>
+    <p>In a second terminal: <code>roc test main.roc</code>. Change <code>"Ada"</code> on one side
+    and watch it fail, naming both values.</p></li>
+  </ol>
 </section>
 
 <section>
   <h2>How a request flows</h2>
   <ol class="flow">
-    <li><code>init!</code> runs once, at start: it opens the database and returns the
-    app's <code>Context</code>, shared by every request.</li>
-    <li><code>respond!</code> runs for each request, on its own lightweight thread: the
-    routes that read a file or the database are matched there.</li>
-    <li>Everything else goes to <code>page</code>, a plain function: a path in, a response
-    out. It renders nothing and reads nothing, so it is just data, which the next lesson
-    tests.</li>
+    <li><code>init!</code> runs once, at start: it opens the database and returns the app's
+    <code>Context</code>, shared by every request.</li>
+    <li><code>respond!</code> runs for each request, on its own lightweight thread; the routes
+    that read a file or the database are matched there.</li>
+    <li>Everything else goes to <code>page</code>, a plain function: a path in, a response out.
+    It renders nothing and reads nothing, so <code>roc test</code> can call it.</li>
   </ol>
-  <p>The <code>!</code> marks a function with effects. Roc tracks them in the types, so the
-  pages that need none stay pure, and you can see which is which.</p>
+  <p>The <code>!</code> marks a function with effects; Roc tracks them in the types. A test can
+  also reach inside a response, as the one in <code>main.roc</code> does:</p>
+  <pre><code>expect
+	match page("/") {
+		Ok({ status: 200, body: Html({ template: Start(start_page), .. }), .. }) =&gt; start_page.hello == hello
+		_ =&gt; False
+	}</code></pre>
+  <p>The HTML itself is roux's to get right: it tests its renderer against an oracle over
+  thousands of generated templates. Your tests are about your app.</p>
 </section>
 {{> Bottom nav}}

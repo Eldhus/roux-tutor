@@ -6,7 +6,7 @@
 </header>
 <nav class="turn">
   <a class="prev" href="/routes"><small>back</small>Routes</a>
-  <a class="next" href="/tests"><small>next</small>Tests</a>
+  <a class="next" href="/guestbook"><small>next</small>Database</a>
 </nav>
 </main>
 </body>

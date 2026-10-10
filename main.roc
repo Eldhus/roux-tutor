@@ -1,9 +1,8 @@
-app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.2.1/3oysswDPafJNoLR1a2AnULtDEjjAnzUfiwwwL4M7GDtd.tar.zst" }
+app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.2.2/54QkBtgQh6dMAUA6reFeFnkdBj2yiZLB7iKfSywDMZjQ.tar.zst" }
 
 ## roux-tutor: the tutorial is this app. Every page you read is a template
-## in templates/, filled from the Roc below; each lesson asks you to
-## change one of them, and `./roux dev main.roc` puts the change on the
-## page as you save.
+## in templates/, filled from the Roc below, and `./roux dev main.roc` puts
+## your changes on the page as you save.
 
 import pf.Server
 import pf.Rocstache
@@ -15,31 +14,29 @@ import db/Database
 import db/Guestbook
 import db/Likes
 import templates/Hello
-import templates/Welcome
-import templates/Markup
-import templates/Data
-import templates/Types
-import templates/Lists
+import templates/Start
+import templates/Speed
+import templates/Syntax
 import templates/Routes
-import templates/Tests
 import templates/Book
 import templates/Live
 import templates/Ship
 import templates/NotFound
 import templates/Greeting
+import templates/Menu
 import templates/LikeCount
 
 # ── Your turn ──────────────────────────────────────────────────────────────
 
-## Lesson 2: who the greeting is for.
+## Who the greeting is for.
 you = "friend"
 
-## Lesson 3 adds a field here. `Hello.Ctx` is what templates/Hello.rocstache
-## reads: roux wrote that type, in templates/Hello.roc.
+## What templates/Hello.rocstache reads: `Hello.Ctx`, a type roux wrote in
+## templates/Hello.roc. Add a field to the template, and roc asks for it here.
 hello : Hello.Ctx
 hello = { name: you }
 
-## Lesson 4: the menu. Add a dish.
+## The menu (Go deeper: Templates).
 dishes : List({ name : Str, price : U32 })
 dishes = [
 	{ name: "Roux", price: 120 },
@@ -62,17 +59,26 @@ init! = || {
 
 Err : [NotFound, BadRequest(Str), DbErr(Sqlite.Err), FileErr(File.FileErr), SseErr(Sse.SseErr)]
 
-## Every request. The pages that only show data are `page`, pure; the
-## ones that read a file or the database are here.
+## Every request. The pages made from data alone are `page`, pure; the ones
+## that read a file or the database are here.
 respond! : Server.Request, Context => Try(Server.Response(_), Err)
 respond! = |request, { db }| {
 	path = path_of(request.target)
 	match (request.method, path) {
-		("GET", "/data") => data!()
+		("GET", "/templates") => templates!()
 		("GET", "/guestbook") => book!(db, request)
 		("POST", "/guestbook") => sign!(db, request)
 		("GET", "/live") => live!(db, request)
 		("POST", "/like") => like!(db, request)
+		("GET", "/race/db") => {
+			{ count } = Likes.count!(Sqlite.read(db, request))?
+			Ok(Server.text("${count.to_str()} likes"))
+		}
+		("GET", "/race/patch") => {
+			stream = Sse.start!(request, [])?
+			Sse.send!(stream, Rocstache.patch!(LikeCount.template({ count: 7 })))?
+			Sse.end!(stream)
+		}
 		("GET", _) =>
 			match page(path) {
 				Ok(response) => Ok(response)
@@ -86,26 +92,25 @@ respond! = |request, { db }| {
 page : Str -> Try(Server.Response(_), [NotFound])
 page = |path|
 	match path.split_on("/") {
-		["", ""] => Ok(Rocstache.html(Welcome.template({ frame: frame("/"), nav: nav("/") })))
-		["", "markup"] => Ok(Rocstache.html(Markup.template({ frame: frame("/markup"), nav: nav("/markup"), hello })))
-		["", "types"] => Ok(Rocstache.html(Types.template({ frame: frame("/types"), nav: nav("/types"), hello })))
-		["", "lists"] => Ok(Rocstache.html(Lists.template({ frame: frame("/lists"), nav: nav("/lists"), menu: { dishes: dishes } })))
+		["", ""] => Ok(Rocstache.html(Start.template({ frame: frame("/"), nav: nav("/"), hello })))
+		["", "speed"] => Ok(Rocstache.html(Speed.template({ frame: frame("/speed"), nav: nav("/speed"), hello })))
 		["", "routes"] => Ok(Rocstache.html(Routes.template({ frame: frame("/routes"), nav: nav("/routes") })))
-		["", "tests"] => Ok(Rocstache.html(Tests.template({ frame: frame("/tests"), nav: nav("/tests") })))
 		["", "ship"] => Ok(Rocstache.html(Ship.template({ frame: frame("/ship"), nav: nav("/ship") })))
-		# Lesson 5: a route of your own goes here.
+		["", "race", "text"] => Ok(Server.text("Hello from Roc"))
+		["", "race", "page"] => Ok(Rocstache.html(Menu.template({ dishes: dishes })))
+		# Routes: a route of your own goes here.
 		_ => Err(NotFound)
 	}
 
-## Lesson 2 shows the module roux wrote for templates/Hello.rocstache: read
-## now, so the page shows it as it is.
-data! : () => Try(Server.Response(_), Err)
-data! = || {
+## The Templates page shows the module roux wrote for templates/Hello.rocstache,
+## read now, so it is as it is.
+templates! : () => Try(Server.Response(_), Err)
+templates! = || {
 	generated = File.read_utf8!("templates/Hello.roc", 64 * 1024)?
-	Ok(Rocstache.html(Data.template({ frame: frame("/data"), nav: nav("/data"), hello, generated })))
+	Ok(Rocstache.html(Syntax.template({ frame: frame("/templates"), nav: nav("/templates"), menu: { dishes: dishes }, generated })))
 }
 
-# ── Lesson 7: the guestbook ────────────────────────────────────────────────
+# ── The guestbook ──────────────────────────────────────────────────────────
 
 book! : Sqlite.Db, Server.Request => Try(Server.Response(_), Err)
 book! = |db, request| {
@@ -133,7 +138,7 @@ field = |form, key|
 		Err(_) => Err(BadRequest("the form has no ${key}"))
 	}
 
-# ── Lesson 8: live, with Datastar ──────────────────────────────────────────
+# ── Live, with Datastar ────────────────────────────────────────────────────
 
 live! : Sqlite.Db, Server.Request => Try(Server.Response(_), Err)
 live! = |db, request| {
@@ -155,28 +160,39 @@ like! = |db, request| {
 
 # ── The frame every page shares ────────────────────────────────────────────
 
-lessons = [
-	{ href: "/", name: "Welcome" },
-	{ href: "/markup", name: "Markup" },
-	{ href: "/data", name: "Data" },
-	{ href: "/types", name: "Types" },
-	{ href: "/lists", name: "Lists" },
-	{ href: "/routes", name: "Routes" },
-	{ href: "/tests", name: "Tests" },
+Lesson : { href : Str, name : Str }
+
+## The two-minute path, then the rest.
+start : List(Lesson)
+start = [{ href: "/", name: "Start" }, { href: "/speed", name: "Speed" }]
+
+deeper : List(Lesson)
+deeper = [
+	{ href: "/templates", name: "Templates" },
+	{ href: "/routes", name: "Routes and tests" },
 	{ href: "/guestbook", name: "Database" },
 	{ href: "/live", name: "Live" },
 	{ href: "/ship", name: "Ship" },
 ]
 
+lessons : List(Lesson)
+lessons = start.concat(deeper)
+
+Marked : { href : Str, name : Str, number : Str, current : Bool }
+
 ## The page's title and the lessons, this one marked.
-frame : Str -> { title : Str, lessons : List({ href : Str, name : Str, number : Str, current : Bool }) }
+frame : Str -> { title : Str, start : List(Marked), deeper : List(Marked) }
 frame = |here| {
-	title: (lessons.find_first(|l| l.href == here) ?? { href: here, name: "Not found" }).name,
-	lessons: lessons.map_with_index(|l, i| { href: l.href, name: l.name, number: i.to_str(), current: l.href == here }),
+	marked = lessons.map_with_index(|l, i| { href: l.href, name: l.name, number: (i + 1).to_str(), current: l.href == here })
+	{
+		title: (lessons.find_first(|l| l.href == here) ?? { href: here, name: "Not found" }).name,
+		start: marked.take_first(start.len()),
+		deeper: marked.drop_first(start.len()),
+	}
 }
 
 ## The lessons before and after this one (none at either end).
-nav : Str -> { prev : List({ href : Str, name : Str }), next : List({ href : Str, name : Str }) }
+nav : Str -> { prev : List(Lesson), next : List(Lesson) }
 nav = |here|
 	match lessons.find_first_index(|l| l.href == here) {
 		Ok(at) => {
@@ -200,13 +216,13 @@ path_of = |target|
 		Err(_) => target
 	}
 
-# ── Lesson 6: tests ────────────────────────────────────────────────────────
+# ── Tests: `roc test main.roc` ─────────────────────────────────────────────
 
 expect page("/nope") == Err(NotFound)
 
 expect
-	match page("/lists") {
-		Ok({ status: 200, body: Html({ template: Lists(lists), .. }), .. }) => lists.menu.dishes == dishes
+	match page("/") {
+		Ok({ status: 200, body: Html({ template: Start(start_page), .. }), .. }) => start_page.hello == hello
 		_ => False
 	}
 

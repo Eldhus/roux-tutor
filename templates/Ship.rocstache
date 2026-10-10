@@ -1,6 +1,6 @@
 {{> Top frame}}
 <header>
-  <p class="kicker">Lesson 9</p>
+  <p class="kicker">Go deeper</p>
   <h1>Ship</h1>
   <p class="lede">One file. No runtime to install, no proxy in front, no container.</p>
 </header>
