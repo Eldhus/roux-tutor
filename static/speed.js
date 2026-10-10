@@ -102,73 +102,70 @@
     drawHistory();
   })();
 
-  // ── The drag race ───────────────────────────────────────────────────────
+  // ── The drag race: one chart, two scales ────────────────────────────────
+  // Each lane is raced by the browser, then by roux-load (through roux dev's
+  // /_dev/race). The browser's bar grows left on its scale, roux-load's
+  // right on its own, hundreds of times longer; the badge is the ratio.
   const lanes = [
-    { name: "static file", note: "the host alone, no Roc", url: "/favicon.svg", server: "no Roc" },
+    { name: "static file", note: "the host alone, no Roc", url: "/favicon.svg" },
     { name: "Roc text", note: "a handler, no template", url: "/race/text" },
     { name: "template", note: "the menu, rendered", url: "/race/page" },
     { name: "SQLite", note: "a query, then text", url: "/race/db" },
-    { name: "Datastar", note: "a stream, one patch", url: "/race/patch", server: "streamed" },
+    { name: "Datastar", note: "a stream, one patch", url: "/race/patch", stream: true },
   ];
+  const results = lanes.map(() => ({ browser: 0, raw: 0 }));
 
-  // A heat's lanes, drawn into `into`: set(i, numbers) fills one in.
-  const board = (into, statsLabel) => {
-    const rates = lanes.map(() => 0);
-    const rows = lanes.map((lane, i) => {
-      const row = document.createElement("div");
-      row.className = "lane";
-      row.style.setProperty("--lane", `var(--lane-${i})`);
-      row.innerHTML = `<div class="who"><b>${lane.name}</b><small>${lane.note}</small></div>` +
-        `<div class="road"><span class="bar"></span><span class="rate">–</span></div>` +
-        `<div class="stats"><span>p50 <b class="p50">–</b></span><span>p99 <b class="p99">–</b></span>` +
-        `<span>${statsLabel} <b class="extra">–</b></span></div>`;
-      into.append(row);
-      return row;
-    });
-    const cell = (i, name) => rows[i].querySelector(`.${name}`);
-    return {
-      reset(extra) {
-        rates.fill(0);
-        rows.forEach((row, i) => {
-          row.classList.remove("running", "out");
-          row.querySelector(".bar").style.width = "0";
-          for (const name of ["rate", "p50", "p99"]) cell(i, name).textContent = "–";
-          cell(i, "extra").textContent = extra(lanes[i]);
-        });
-      },
-      running(i, on) { rows[i].classList.toggle("running", on); },
-      out(i, why) { rows[i].classList.add("out"); cell(i, "rate").textContent = why; },
-      set(i, { rate, p50, p99, extra }) {
-        rates[i] = rate;
-        const most = Math.max(1, ...rates);
-        rows.forEach((row, j) => { row.querySelector(".bar").style.width = `${(78 * rates[j] / most).toFixed(2)}%`; });
-        cell(i, "rate").textContent = `${Math.round(rate).toLocaleString()} req/s`;
-        if (p50 !== undefined) cell(i, "p50").textContent = ms(p50);
-        if (p99 !== undefined) cell(i, "p99").textContent = ms(p99);
-        if (extra !== undefined) cell(i, "extra").textContent = extra;
-      },
+  const rows = lanes.map((lane, i) => {
+    const row = document.createElement("div");
+    row.className = "duel-row";
+    row.style.setProperty("--lane", `var(--lane-${i})`);
+    row.innerHTML =
+      `<div class="half browser"><span class="figure"><b class="n">–</b><small class="sub"></small></span>` +
+      `<span class="bar"></span></div>` +
+      `<div class="name"><b>${lane.name}</b><small>${lane.note}</small><i class="ratio"></i></div>` +
+      `<div class="half raw"><span class="bar"></span>` +
+      `<span class="figure"><b class="n">${lane.stream ? "a stream" : "–"}</b><small class="sub">` +
+      `${lane.stream ? "roux-load reads plain answers" : ""}</small></span></div>`;
+    $("duel-rows").append(row);
+    return row;
+  });
+  const part = (i, side, name) => rows[i].querySelector(`.half.${side} .${name}`);
+
+  // A round axis maximum: 1, 2 or 5 times a power of ten, at least `x`.
+  const roundUp = (x) => {
+    const power = 10 ** Math.floor(Math.log10(Math.max(x, 1)));
+    return [1, 2, 5, 10].map((m) => m * power).find((m) => m >= x);
+  };
+  const compact = (x) => x >= 1e6 ? `${+(x / 1e6).toFixed(1)}M` : x >= 1e3 ? `${+(x / 1e3).toFixed(0)}k` : `${Math.round(x)}`;
+  const draw = () => {
+    const most = {
+      browser: roundUp(Math.max(100, ...results.map((r) => r.browser))),
+      raw: roundUp(Math.max(1000, ...results.map((r) => r.raw))),
     };
+    for (const side of ["browser", "raw"]) {
+      $(`axis-${side}`).innerHTML = [0, 0.5, 1].map((f) =>
+        `<span style="--at:${f * 100}%">${compact(f * most[side])}</span>`).join("");
+    }
+    results.forEach((r, i) => {
+      for (const side of ["browser", "raw"]) {
+        part(i, side, "bar").style.width = `${(100 * r[side] / most[side]).toFixed(2)}%`;
+        if (r[side] > 0) part(i, side, "n").textContent = Math.round(r[side]).toLocaleString();
+      }
+      const ratio = rows[i].querySelector(".ratio");
+      ratio.textContent = r.browser > 0 && r.raw > 0 ? `×${Math.round(r.raw / r.browser).toLocaleString()}` : "";
+    });
   };
+  draw();
 
-  const lightsUp = async (name) => {
-    const lights = [...$(name).children];
-    lights.forEach((light) => light.className = "");
-    for (const light of lights) { light.className = "on"; await sleep(320); }
-    lights.forEach((light) => light.className = "go");
-    return () => lights.forEach((light) => light.className = "");
-  };
-
-  // In the browser: four requests at a time (six a site, shared by every
+  // The browser's heat: four requests at a time (six a site, shared by every
   // tab, and live reload holds one), each given up after three seconds, so
   // a race starved of connections says so instead of hanging.
-  const browser = board($("lanes"), "server");
-  browser.reset((lane) => lane.server ?? "–");
   const quantile = (sorted, q) => sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))];
   const serverTime = (url) => {
     const entries = performance.getEntriesByName(url);
     return entries[entries.length - 1]?.serverTiming?.find((t) => t.name === "roux")?.duration;
   };
-  const raceInBrowser = async (i) => {
+  const raceBrowser = async (i) => {
     const url = new URL(lanes[i].url, location.href).href;
     const times = [];
     const servers = [];
@@ -188,89 +185,90 @@
       }
     };
     const tick = () => {
-      const sorted = [...times].sort((a, b) => a - b);
+      results[i].browser = times.length / Math.max(0.001, (performance.now() - started) / 1000);
       const s = serverTime(url);
       if (s !== undefined) servers.push(s);
-      browser.set(i, {
-        rate: times.length / Math.max(0.001, (performance.now() - started) / 1000),
-        p50: sorted.length ? quantile(sorted, 0.5) : undefined,
-        p99: sorted.length ? quantile(sorted, 0.99) : undefined,
-        extra: servers.length ? ms([...servers].sort((a, b) => a - b)[servers.length >> 1]) : undefined,
-      });
+      const sorted = [...times].sort((a, b) => a - b);
+      const p50 = sorted.length ? `p50 ${ms(quantile(sorted, 0.5))}` : "";
+      const server = servers.length ? ` · app ${ms([...servers].sort((a, b) => a - b)[servers.length >> 1])}` : "";
+      part(i, "browser", "sub").textContent = p50 + server;
+      draw();
     };
-    browser.running(i, true);
     performance.setResourceTimingBufferSize(100000);
     const ticker = setInterval(tick, 120);
     await Promise.all(Array.from({ length: 4 }, worker));
     clearInterval(ticker);
     tick();
-    browser.running(i, false);
     performance.clearResourceTimings();
     return !starved;
   };
 
-  $("go").addEventListener("click", async (event) => {
-    const button = event.currentTarget;
-    button.disabled = true;
-    browser.reset((lane) => lane.server ?? "–");
-    const lightsOff = await lightsUp("lights");
-    let ok = true;
-    for (let i = 0; i < lanes.length && ok; i++) ok = await raceInBrowser(i);
-    lightsOff();
-    if (!ok) {
-      $("browser-note").textContent = "A request waited three seconds for a connection: other tabs " +
-        "of this site hold them (each keeps one open for live reload). Close a few and race again.";
-    }
-    button.disabled = false;
-    button.textContent = "In your browser, again";
-  });
-
-  // From outside: roux dev runs roux-load against the app, lane by lane;
-  // this page asks where it is four times a second. roux-load reads plain
-  // answers, not streams, so the Datastar lane sits this one out.
-  const outside = board($("out-lanes"), "p99.9");
-  outside.reset(() => "–");
-  outside.out(4, "a stream: not for roux-load");
-  const raced = lanes.slice(0, 4);
-  $("out").addEventListener("click", async (event) => {
-    const button = event.currentTarget;
-    button.disabled = true;
-    outside.reset(() => "–");
-    outside.out(4, "a stream: not for roux-load");
-    const lightsOff = await lightsUp("out-lights");
-    const paths = raced.map((lane) => lane.url).join(",");
+  // roux-load's heat: one lane through roux dev, asked about four times a
+  // second until it has a result. Null when roux dev cannot run it.
+  const raceRaw = async (i) => {
     let started;
-    try {
-      started = await fetch(`/_dev/race?paths=${paths}`, { method: "POST" });
-    } catch {}
-    if (!started || !started.headers.get("content-type")?.startsWith("application/json")) {
-      $("out-note").textContent = "Run this under ./roux dev: it runs roux-load for you.";
-      lightsOff();
-      button.disabled = false;
-      return;
+    // 409: another race is on (another tab's); wait it out, a few times.
+    for (let tries = 0; tries < 20; tries++) {
+      try {
+        started = await fetch(`/_dev/race?paths=${lanes[i].url}`, { method: "POST" });
+      } catch {}
+      if (started?.status !== 409) break;
+      await sleep(500);
     }
+    if (!started || started.status !== 202) return null;
     for (;;) {
       await sleep(250);
       let state;
-      try { state = await (await fetch("/_dev/race", { cache: "no-store" })).json(); } catch { break; }
-      state.lanes.forEach((lane, i) => {
-        outside.running(i, state.running && state.current === i && !lane.result);
-        if (lane.result) {
-          outside.set(i, {
-            rate: lane.result.requests_per_second,
-            p50: lane.result.p50_us / 1000,
-            p99: lane.result.p99_us / 1000,
-            extra: ms(lane.result.p999_us / 1000),
-          });
-        }
-      });
-      if (!state.running) {
-        if (!state.loader) $("out-note").textContent = "roux dev found no roux-load beside roux.";
+      try { state = await (await fetch("/_dev/race", { cache: "no-store" })).json(); } catch { return null; }
+      if (!state.loader) return null;
+      const result = state.lanes[0]?.result;
+      if (result) {
+        results[i].raw = result.requests_per_second;
+        part(i, "raw", "sub").textContent = `p50 ${ms(result.p50_us / 1000)} · p99 ${ms(result.p99_us / 1000)}`;
+        draw();
+        return result;
+      }
+      if (!state.running) return null;
+    }
+  };
+
+  $("go").addEventListener("click", async (event) => {
+    const button = event.currentTarget;
+    const lights = [...$("lights").children];
+    button.disabled = true;
+    results.forEach((r) => { r.browser = 0; r.raw = 0; });
+    rows.forEach((row, i) => {
+      row.classList.remove("done");
+      for (const side of ["browser", "raw"]) {
+        if (side === "raw" && lanes[i].stream) continue;
+        part(i, side, "n").textContent = "–";
+        part(i, side, "sub").textContent = "";
+      }
+    });
+    draw();
+    lights.forEach((light) => light.className = "");
+    for (const light of lights) { light.className = "on"; await sleep(320); }
+    lights.forEach((light) => light.className = "go");
+    let note = null;
+    for (let i = 0; i < lanes.length; i++) {
+      rows[i].classList.add("running");
+      rows[i].dataset.side = "browser";
+      if (!(await raceBrowser(i))) {
+        note = "A request waited three seconds for a connection: other tabs of this site hold " +
+          "them (each keeps one open for live reload). Close a few and race again.";
+        rows[i].classList.remove("running");
         break;
       }
+      if (!lanes[i].stream) {
+        rows[i].dataset.side = "raw";
+        if ((await raceRaw(i)) === null) note = "roux-load races under ./roux dev: run it there to see the right side.";
+      }
+      rows[i].classList.remove("running");
+      rows[i].classList.add("done");
     }
-    lightsOff();
+    if (note) $("race-note").textContent = note;
+    lights.forEach((light) => light.className = "");
     button.disabled = false;
-    button.textContent = "From outside, again";
+    button.textContent = "Race again";
   });
 })();

@@ -195,24 +195,50 @@ button:hover { filter: brightness(1.08); }
 .lights i { width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 1px solid var(--line); transition: all 0.12s; }
 .lights i.on { background: #e5483a; border-color: #e5483a; box-shadow: 0 0 12px #e5483a; }
 .lights i.go { background: var(--ok); border-color: var(--ok); box-shadow: 0 0 12px var(--ok); }
-.lanes { display: grid; gap: 0.2rem; margin-top: 1rem; }
-.lane { display: grid; grid-template-columns: 8.5rem 1fr; grid-template-rows: auto auto; column-gap: 1rem;
-  padding: 0.65rem 0; border-top: 1px solid var(--line); }
-.lane .who { grid-row: span 2; }
-.lane .who b { display: block; font: 600 0.92rem var(--mono); color: var(--lane); }
-.lane .who small { color: var(--mute); font-size: 0.74rem; }
-.road { display: flex; align-items: center; gap: 0.6rem; height: 22px; }
-.road .bar { height: 14px; width: 0; border-radius: 3px; background: var(--lane); transition: width 0.12s linear;
-  box-shadow: 0 0 14px -2px var(--lane); }
-.lane.running .bar { background: repeating-linear-gradient(110deg, var(--lane) 0 10px,
-  color-mix(in srgb, var(--lane) 70%, #fff) 10px 14px); }
-.lane.running .bar { min-width: 3rem; }
-.lane.out .who b, .lane.out .rate { color: var(--mute); font-weight: 500; }
-.heat + .heat { margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px dashed var(--line); }
-.rate { font: 700 0.92rem var(--mono); color: var(--ink); white-space: nowrap; }
-.stats { display: flex; gap: 1.1rem; font: 0.74rem var(--mono); color: var(--mute); }
-.stats b { color: var(--ink-2); font-weight: 600; }
-.lane .stats .server { color: var(--lane); }
+/* The duel: lanes down the middle, the browser's bars growing left on its
+   scale, roux-load's right on its own; numbers at the outer edges. */
+.duel { --fig: 7.5rem; --name: 9.5rem; margin-top: 1.2rem; }
+.duel-head, .axis, .duel-row { display: grid; grid-template-columns: 1fr var(--name) 1fr; column-gap: 0.8rem; }
+.duel-head .side { display: grid; gap: 0.1rem; }
+.duel-head .side b { font: 700 0.8rem var(--mono); text-transform: uppercase; letter-spacing: 0.12em; }
+.duel-head .side small { color: var(--mute); font-size: 0.74rem; }
+.duel-head .browser { text-align: right; }
+.duel-head .browser b { color: var(--ink-2); }
+.duel-head .raw b { color: var(--copper-2); text-shadow: 0 0 14px color-mix(in srgb, var(--copper) 55%, transparent); }
+.axis { margin: 0.7rem 0 0.2rem; height: 1.2rem; }
+.ticks { position: relative; font: 0.66rem var(--mono); color: var(--mute); border-bottom: 1px solid var(--line); }
+.ticks.browser { margin-left: var(--fig); }
+.ticks.raw { margin-right: var(--fig); }
+.ticks span { position: absolute; bottom: 0.25rem; transform: translateX(-50%); white-space: nowrap; }
+.ticks.browser span { right: var(--at); transform: translateX(50%); }
+.ticks.raw span { left: var(--at); }
+.ticks span::after { content: ""; position: absolute; left: 50%; top: 100%; height: 0.3rem; width: 1px;
+  background: var(--line); }
+.duel-row { align-items: center; padding: 0.55rem 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+.duel-row .name { text-align: center; position: relative; }
+.duel-row .name b { display: block; font: 700 0.9rem var(--mono); color: var(--lane); }
+.duel-row .name small { color: var(--mute); font-size: 0.7rem; }
+.duel-row .ratio { display: block; margin: 0.25rem auto 0; width: max-content; padding: 0.05rem 0.5rem;
+  border-radius: 999px; font: 700 0.75rem var(--mono); font-style: normal; color: #1b0f09; background: var(--lane);
+  box-shadow: 0 0 14px -3px var(--lane); }
+.duel-row .ratio:empty { display: none; }
+.half { display: grid; align-items: center; gap: 0.6rem; }
+.half.browser { grid-template-columns: var(--fig) 1fr; }
+.half.raw { grid-template-columns: 1fr var(--fig); }
+.half .bar { height: 18px; width: 0; transition: width 0.15s linear; }
+.half.browser .bar { justify-self: end; border-radius: 4px 0 0 4px;
+  background: color-mix(in srgb, var(--lane) 45%, var(--bg)); border: 1px solid color-mix(in srgb, var(--lane) 60%, transparent); border-right: 0; }
+.half.raw .bar { justify-self: start; border-radius: 0 4px 4px 0; background: var(--lane);
+  box-shadow: 0 0 18px -3px var(--lane); }
+.figure { display: grid; gap: 0.05rem; }
+.half.browser .figure { text-align: right; }
+.figure .n { font: 700 1.02rem var(--mono); color: var(--ink); white-space: nowrap; }
+.half.raw .figure .n { font-size: 1.2rem; color: var(--lane); text-shadow: 0 0 16px color-mix(in srgb, var(--lane) 45%, transparent); }
+.figure .sub { color: var(--mute); font: 0.66rem var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.duel-row.running[data-side="browser"] .half.browser .bar,
+.duel-row.running[data-side="raw"] .half.raw .bar { min-width: 2.5rem; background: repeating-linear-gradient(110deg,
+  var(--lane) 0 10px, color-mix(in srgb, var(--lane) 70%, #fff) 10px 14px); }
+.scale-note { margin: 0.6rem 0 0; text-align: center; color: var(--mute); font-size: 0.75rem; }
 
 /* Facts */
 .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin: 1rem 0 0; }
@@ -248,7 +274,8 @@ button:hover { filter: brightness(1.08); }
   .clock { grid-template-columns: 1fr; gap: 1rem; }
   .legend { grid-template-columns: repeat(2, 1fr); }
   .facts { grid-template-columns: 1fr; }
-  .lane { grid-template-columns: 1fr; }
-  .lane .who { grid-row: auto; }
+  .duel { --fig: 4.6rem; --name: 5.4rem; }
+  .duel-head .side small, .duel-row .name small, .figure .sub { display: none; }
+  .figure .n, .half.raw .figure .n { font-size: 0.85rem; }
   .quest li { padding-left: 3.4rem; }
 }

@@ -33,33 +33,36 @@
 <section class="card" id="race">
   <div class="card-head">
     <h2>Drag race</h2>
-    <p>The same lanes, raced two ways. Two seconds a lane.</p>
+    <p>Each lane raced twice: by your browser, then by roux-load. Two seconds each.</p>
+  </div>
+  <div class="start">
+    <button data-roux="go">Race</button>
+    <span class="lights" data-roux="lights"><i></i><i></i><i></i></span>
   </div>
 
-  <div class="heat">
-    <div class="start">
-      <button data-roux="go">In your browser</button>
-      <span class="lights" data-roux="lights"><i></i><i></i><i></i></span>
+  <div class="duel" data-roux="duel">
+    <div class="duel-head">
+      <div class="side browser"><b>your browser</b><small>fetch, four at a time</small></div>
+      <div></div>
+      <div class="side raw"><b>roux-load</b><small>io_uring, 64 connections</small></div>
     </div>
-    <div class="lanes" data-roux="lanes"></div>
-    <p class="note" data-roux="browser-note">Four requests at a time: a browser keeps six
-    connections a site, and live reload holds one per tab. <b>server</b> is the app's own time
-    per request, from each answer's <code>Server-Timing</code> header: the rest of the round
-    trip is the browser.</p>
+    <div class="axis">
+      <div class="ticks browser" data-roux="axis-browser"></div>
+      <div></div>
+      <div class="ticks raw" data-roux="axis-raw"></div>
+    </div>
+    <div class="duel-rows" data-roux="duel-rows"></div>
+    <p class="scale-note">Two scales: each side has its own, and the right one is hundreds of
+    times longer. The badge is how many times faster.</p>
   </div>
 
-  <div class="heat">
-    <div class="start">
-      <button data-roux="out">From outside, with roux-load</button>
-      <span class="lights" data-roux="out-lights"><i></i><i></i><i></i></span>
-    </div>
-    <div class="lanes" data-roux="out-lanes"></div>
-    <p class="note" data-roux="out-note">roux dev runs <code>roux-load</code> against this app:
-    io_uring, 64 connections, two threads, nothing allocated while it runs. Under
-    <code>roux dev</code> the app has two shards; a built app uses every core. From a terminal:
-    <code>./roux load --port 8080 --path /race/page</code>. The serious race runs every night at
-    <a href="https://fourneau.y2kbugger.com/">fourneau.y2kbugger.com</a>.</p>
-  </div>
+  <p class="note" data-roux="race-note">Your browser keeps six connections a site (live reload
+  holds one per tab), and most of each round trip is its own work; the app's share, from each
+  answer's <code>Server-Timing</code> header, shows under its bar. roux-load is fourneau's load
+  generator, run by roux dev against this app: under <code>roux dev</code> the app has two
+  shards, a built app uses every core. From a terminal: <code>./roux load --port 8080 --path
+  /race/page</code>. The serious race runs every night at
+  <a href="https://fourneau.y2kbugger.com/">fourneau.y2kbugger.com</a>.</p>
 </section>
 
 <section class="card">
