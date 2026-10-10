@@ -1,32 +1,51 @@
 #!/bin/sh
-# roux, the version this tutorial is written for: fetched once into
-# .roux-tools/, its checksum checked, then run with your arguments.
+# The two tools this tutorial runs, pinned. Each is downloaded once into
+# .roux-tools/, checked against its sha256, then unpacked.
+#
+#   ./roux dev main.roc        roux: the dev server (and `build`)
+#   ./roux roc test main.roc   roc: the Roc compiler roux uses
 set -eu
-version=0.2.3
-sha256=b87ab33c2ec7718a0733940983cba7d30f768c325ce139f3e9a59a194aa3c444
 
-here=$(cd "$(dirname "$0")" && pwd)
-bin=$here/.roux-tools/roux-$version
-if [ ! -x "$bin/roux" ]; then
-	if [ "$(uname -sm)" != "Linux x86_64" ]; then
-		echo "roux runs on Linux x86-64; this is $(uname -sm)." >&2
+roux=roux-0.2.3
+roux_url=https://github.com/Eldhus/roux/releases/download/v0.2.3/roux-0.2.3-x86_64-linux.tar.gz
+roux_sha256=b87ab33c2ec7718a0733940983cba7d30f768c325ce139f3e9a59a194aa3c444
+
+roc=roc-nightly-2026-10-06-c34079d
+roc_url=https://github.com/roc-lang/nightlies/releases/download/nightly-2026-10-06-c34079d/roc_nightly-linux_x86_64-2026-10-06-c34079d.tar.gz
+roc_sha256=11bf5c73b81e517ae2807f4211fe9e996f48f87a68b1e85b82c4ae2c6499a5d6
+
+tools=$(cd "$(dirname "$0")" && pwd)/.roux-tools
+
+# fetch NAME URL SHA256 STRIP: download, check, unpack into $tools/NAME.
+# STRIP is how many leading directories the archive's paths have.
+fetch() {
+	[ -d "$tools/$1" ] && return
+	echo "roux: fetching $1 (once)" >&2
+	mkdir -p "$tools"
+	curl -fL --progress-bar "$2" -o "$tools/$1.tar.gz"
+	if ! echo "$3  $tools/$1.tar.gz" | sha256sum -c --quiet; then
+		echo "roux: $1's download does not match its checksum; removed" >&2
+		rm -f "$tools/$1.tar.gz"
 		exit 1
 	fi
-	url=https://github.com/Eldhus/roux/releases/download/v$version/roux-$version-x86_64-linux.tar.gz
-	echo "roux: fetching roux $version, once, into .roux-tools/" >&2
-	tmp=$(mktemp -d)
-	if command -v curl >/dev/null; then
-		curl -fsSL "$url" -o "$tmp/roux.tar.gz"
-	else
-		wget -q "$url" -O "$tmp/roux.tar.gz"
-	fi
-	if ! echo "$sha256  $tmp/roux.tar.gz" | sha256sum -c --status; then
-		echo "roux: the download's checksum is not roux $version's; nothing installed." >&2
-		rm -rf "$tmp"
-		exit 1
-	fi
-	mkdir -p "$bin"
-	tar -xzf "$tmp/roux.tar.gz" -C "$bin"
-	rm -rf "$tmp"
+	mkdir -p "$tools/$1.unpacking"
+	tar -xzf "$tools/$1.tar.gz" -C "$tools/$1.unpacking" --strip-components="$4"
+	mv "$tools/$1.unpacking" "$tools/$1"
+	rm "$tools/$1.tar.gz"
+}
+
+if [ "$(uname -sm)" != "Linux x86_64" ]; then
+	echo "roux runs on Linux x86-64; this is $(uname -sm)." >&2
+	exit 1
 fi
-exec "$bin/roux" "$@"
+fetch "$roux" "$roux_url" "$roux_sha256" 0
+fetch "$roc" "$roc_url" "$roc_sha256" 1
+
+# roux runs the `roc` on PATH: this one.
+PATH=$tools/$roc:$PATH
+export PATH
+if [ "${1:-}" = roc ]; then
+	shift
+	exec roc "$@"
+fi
+exec "$tools/$roux/roux" "$@"

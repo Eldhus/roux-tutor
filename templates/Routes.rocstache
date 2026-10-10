@@ -21,7 +21,8 @@
     <p>Follow the links again. The pattern binds <code>name</code> to that part of the path.</p></li>
     <li><p>At the bottom of <code>main.roc</code>, test it:</p>
     <pre><code>expect page("/greet/Ada") == Ok(Rocstache.html(Greeting.template({ frame: frame("/routes"), name: "Ada" })))</code></pre>
-    <p>In a second terminal: <code>roc test main.roc</code>. Change <code>"Ada"</code> on one side
+    <p>In a second terminal: <code>./roux roc test main.roc</code> (the Roc compiler roux
+    fetched for you). Change <code>"Ada"</code> on one side
     and watch it fail, naming both values.</p></li>
   </ol>
 </section>
