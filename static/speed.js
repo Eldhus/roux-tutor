@@ -331,10 +331,18 @@
     }
   };
 
+  // A side's final figure lands: a small pop (the class is removed first so
+  // it plays again on the next race).
+  const land = (i, side) => {
+    const n = part(i, side, "n");
+    n.classList.remove("landed");
+    void n.offsetWidth;
+    n.classList.add("landed");
+  };
+
   $("go").addEventListener("click", async (event) => {
     const button = event.currentTarget;
     button.disabled = true;
-    button.textContent = "Racing…";
     $("race-note").hidden = true;
     results.forEach((r) => { r.browser = 0; r.raw = 0; });
     rows.forEach((row, i) => {
@@ -345,6 +353,15 @@
       }
     });
     draw();
+    // The countdown, in the button: its face fills a third a beat.
+    for (const [count, fill] of [["3", 0.34], ["2", 0.67], ["1", 1]]) {
+      button.textContent = count;
+      button.style.setProperty("--fill", fill);
+      await sleep(380);
+    }
+    button.style.setProperty("--fill", 0);
+    button.textContent = "Racing…";
+    button.dataset.phase = "racing";
     let note = null;
     for (let i = 0; i < lanes.length; i++) {
       rows[i].classList.add("running");
@@ -355,8 +372,10 @@
         rows[i].classList.remove("running");
         break;
       }
+      land(i, "browser");
       rows[i].dataset.side = "raw";
       const raw = await raceRaw(i);
+      if (raw !== null) land(i, "raw");
       if (raw === null) note = "roux-load races under ./roux dev: run it there to see the right side.";
       rows[i].classList.remove("running");
       // Not "done": the Start page's boxed card has that class.
@@ -366,6 +385,7 @@
       $("race-note").textContent = note;
       $("race-note").hidden = false;
     }
+    delete button.dataset.phase;
     button.disabled = false;
     button.textContent = "Race again";
   });
