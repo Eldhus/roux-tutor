@@ -79,13 +79,7 @@ respond! = |request, { db }| {
 			{ count } = Likes.count!(Sqlite.read(db, request))?
 			Ok(Server.text("${count.to_str()} likes"))
 		}
-		("GET", "/race/stream") => {
-			stream = Sse.start!(request, [])?
-			for count in 1..=race_stream_patches {
-				Sse.send!(stream, Rocstache.patch!(LikeCount.template({ count: count })))?
-			}
-			Sse.end!(stream)
-		}
+		("GET", "/race/stream") => race_stream!(request)
 		("GET", _) =>
 			match page(path) {
 				Ok(response) => Ok(response)
@@ -150,6 +144,26 @@ live! : Sqlite.Db, Server.Request => Try(Server.Response(_), Err)
 live! = |db, request| {
 	{ count } = Likes.count!(Sqlite.read(db, request))?
 	Ok(Rocstache.html(Live.template({ frame: frame("/live"), nav: nav("/live"), likes: { count: count } })))
+}
+
+## The race's stream: patches as fast as they go. A race ends by hanging
+## up mid-stream, so a peer that left is the finish line, not an error.
+race_stream! : Server.Request => Try(Server.Response(_), Err)
+race_stream! = |request| {
+	stream = Sse.start!(request, [])?
+	match race_patches!(stream) {
+		Ok({}) => Sse.end!(stream)
+		Err(SseErr(Disconnected)) => Ok(Server.streamed)
+		Err(err) => Err(err)
+	}
+}
+
+race_patches! : Sse.Stream => Try({}, [SseErr(Sse.SseErr)])
+race_patches! = |stream| {
+	for count in 1..=race_stream_patches {
+		Sse.send!(stream, Rocstache.patch!(LikeCount.template({ count: count })))?
+	}
+	Ok({})
 }
 
 ## A click: the count goes up in the database, and the new count goes back
