@@ -1,4 +1,4 @@
-app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.2.5/6YNALS838J9D7cL1QpYPE4dgSdBZcSkVkB6rdhV3SL3x.tar.zst" }
+app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.2.6/FshUqDZyBKMS3s4tFrG6YcMoVUzBSd7guKenFmHM9jmG.tar.zst" }
 
 ## roux-tutor: the tutorial is this app. Every page you read is a template
 ## in templates/, filled from the Roc below, and `./roux dev main.roc` puts
@@ -150,20 +150,19 @@ live! = |db, request| {
 ## up mid-stream, so a peer that left is the finish line, not an error.
 race_stream! : Server.Request => Try(Server.Response(_), Err)
 race_stream! = |request| {
-	stream = Sse.start!(request, [])?
-	match race_patches!(stream) {
-		Ok({}) => Sse.end!(stream)
+	match race_patches!(request) {
 		Err(SseErr(Disconnected)) => Ok(Server.streamed)
-		Err(err) => Err(err)
+		result => result
 	}
 }
 
-race_patches! : Sse.Stream => Try({}, [SseErr(Sse.SseErr)])
-race_patches! = |stream| {
+race_patches! : Server.Request => Try(Server.Response(_), [SseErr(Sse.SseErr)])
+race_patches! = |request| {
+	stream = Sse.start!(request, [])?
 	for count in 1..=race_stream_patches {
 		Sse.send!(stream, Rocstache.patch!(LikeCount.template({ count: count })))?
 	}
-	Ok({})
+	Sse.end!(stream)
 }
 
 ## A click: the count goes up in the database, and the new count goes back
