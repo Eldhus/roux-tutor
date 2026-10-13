@@ -32,8 +32,8 @@ ROUX_ACME_IDENTIFIER=example.com ROUX_ACME_STATE=/var/lib/myapp \
   connection: live pages in many tabs do not run out of the six connections HTTP/1.1 allows
   a site.</p>
   <p>The server is <a href="https://github.com/Eldhus/fourneau">fourneau</a>, written in Zig
-  for exactly this: io_uring, a thread per core, your handlers on fibers. The drag race it runs
-  against Go, Rust and others, each night something changed, is itself a roux app:
+  for exactly this: io_uring, a thread per core, your handlers on fibers. It races Go, Rust and
+  others on nights something changed; the results are on a site that is itself a roux app:
   <a href="https://fourneau.y2kbugger.com/">fourneau.y2kbugger.com</a>.</p>
 </section>
 
@@ -42,7 +42,7 @@ ROUX_ACME_IDENTIFIER=example.com ROUX_ACME_STATE=/var/lib/myapp \
   <ul class="next-list">
     <li><a href="https://github.com/Eldhus/roux">roux</a>: the platform, its examples and design</li>
     <li><a href="https://www.roc-lang.org/tutorial">The Roc tutorial</a>: the language;
-    <code>roc experimental-lsp</code> gives your editor its types on hover</li>
+    <code>./roux roc experimental-lsp</code> gives your editor its types on hover</li>
     <li><a href="https://data-star.dev">Datastar</a>: more of what the attributes do</li>
     <li>This folder: delete the lessons and keep the frame. It is a roux app.</li>
   </ul>

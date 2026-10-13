@@ -51,7 +51,7 @@
 
   <p class="note" data-roux="race-note" hidden></p>
   <p class="fine">"app" is the app's own time, from <code>Server-Timing</code>. Under
-  <code>roux dev</code> the app runs two threads; a build, one a core. Nightly races:
+  <code>roux dev</code> the server runs two threads; a build runs one per core. Nightly races:
   <a href="https://fourneau.y2kbugger.com/">fourneau.y2kbugger.com</a>.</p>
 </section>
 
