@@ -2,7 +2,7 @@
 <header>
   <p class="kicker">Go deeper</p>
   <h1>Ship</h1>
-  <p class="lede">One file. No runtime to install, no proxy in front, no container.</p>
+  <p class="lede">One executable, its static files beside it. No runtime to install, no proxy in front, no container.</p>
 </header>
 
 <section class="turn-box">
@@ -27,8 +27,8 @@ ROUX_ACME_DIRECTORY=https://acme-v02.api.letsencrypt.org/directory \
 ROUX_ACME_IDENTIFIER=example.com ROUX_ACME_STATE=/var/lib/myapp \
 ./main</code></pre>
   <p>The server is <a href="https://github.com/Eldhus/fourneau">fourneau</a>, written in Zig
-  for exactly this: io_uring, a thread per core, your handlers on fibers. The race it runs
-  every night against Go, Rust and others is itself a roux app:
+  for exactly this: io_uring, a thread per core, your handlers on fibers. The drag race it runs
+  against Go, Rust and others, each night something changed, is itself a roux app:
   <a href="https://fourneau.y2kbugger.com/">fourneau.y2kbugger.com</a>.</p>
 </section>
 

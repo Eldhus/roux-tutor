@@ -5,7 +5,7 @@
   <p class="lede">A route you added. Change the path and the page follows.</p>
 </header>
 <nav class="turn">
-  <a class="prev" href="/routes"><small>back</small>Routes</a>
+  <a class="prev" href="/routes"><small>back</small>Routes and tests</a>
   <a class="next" href="/guestbook"><small>next</small>Database</a>
 </nav>
 </main>

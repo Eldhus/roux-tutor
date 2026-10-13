@@ -9,7 +9,7 @@
 
 <section class="like">
   <button data-on:click="@post('/like')">♥</button>
-  <p>{{> LikeCount likes}} likes, from everyone who ran this page on this machine</p>
+  <p>{{> LikeCount likes}} likes, every click in this clone</p>
 </section>
 
 <section class="turn-box">
@@ -34,6 +34,6 @@
 Sse.send!(stream, Rocstache.patch!(LikeCount.template({ count: count })))?
 Sse.end!(stream)</code></pre>
   <p>The same template value a page response carries, sent as a patch. A stream can stay
-  open and send many: a clock, a log, a game.</p>
+  open and send many: the Speed page's race sends a thousand.</p>
 </section>
 {{> Bottom nav}}

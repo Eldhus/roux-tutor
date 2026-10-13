@@ -33,7 +33,7 @@
     <li><code>init!</code> runs once, at start: it opens the database and returns the app's
     <code>Context</code>, shared by every request.</li>
     <li><code>respond!</code> runs for each request, on its own lightweight thread; the routes
-    that read a file or the database are matched there.</li>
+    with effects (a file, the database, a stream) are matched there.</li>
     <li>Everything else goes to <code>page</code>, a plain function: a path in, a response out.
     It renders nothing and reads nothing, so <code>roc test</code> can call it.</li>
   </ol>

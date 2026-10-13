@@ -37,7 +37,7 @@ Hint: This record is missing the field: city</code></pre>
   <h2>That is roux</h2>
   <p>Templates and Roc agree by type, checked as you save. Markup lands in milliseconds,
   Roc in a second, mistakes over the page while the last good build keeps serving. The
-  whole app ships as one small file.</p>
+  whole app ships as one small executable.</p>
   <p class="actions"><a class="go" href="/speed">See how fast →</a> <a href="/templates">or go deeper</a></p>
 </section>
 {{> Bottom nav}}

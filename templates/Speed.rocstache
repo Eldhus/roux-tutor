@@ -51,16 +51,16 @@
 
   <p class="note" data-roux="race-note" hidden></p>
   <p class="fine">"app" is the app's own time, from <code>Server-Timing</code>. Under
-  <code>roux dev</code> the app gets two cores; a build gets them all. Nightly races:
+  <code>roux dev</code> the app runs two threads; a build, one a core. Nightly races:
   <a href="https://fourneau.y2kbugger.com/">fourneau.y2kbugger.com</a>.</p>
 </section>
 
 <section class="card">
   <div class="card-head"><h2>Small, and quick to build</h2></div>
   <dl class="facts">
-    <div><dt>&lt; 1 ms</dt><dd>a markup edit: new bytecode, no compiler</dd></div>
+    <div><dt>~1 ms</dt><dd>a markup edit: new bytecode, no compiler</dd></div>
     <div><dt data-roux="roc">~1 s</dt><dd>a Roc edit: roc compiles, the app restarts</dd></div>
-    <div><dt>~3 MB</dt><dd><code>./roux build main.roc</code>: the whole app, one file</dd></div>
+    <div><dt>~3 MB</dt><dd><code>./roux build main.roc</code>: the whole app, one executable</dd></div>
   </dl>
 </section>
 <script src="/speed.js"></script>

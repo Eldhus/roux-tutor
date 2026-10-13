@@ -6,7 +6,7 @@
   matches this path. <a href="/routes">Routes</a> shows how to add one.</p>
 </header>
 <nav class="turn">
-  <a class="next" href="/routes"><small>to</small>Routes</a>
+  <a class="next" href="/routes"><small>to</small>Routes and tests</a>
 </nav>
 </main>
 </body>
