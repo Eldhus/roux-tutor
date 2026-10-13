@@ -1,4 +1,4 @@
-# The roux this tutorial fetches (./roux), and what it builds.
+# The tools ./roux fetches, and what roux builds.
 .roux-tools/
 .roux/
 /main

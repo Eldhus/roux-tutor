@@ -7,7 +7,7 @@ CREATE TABLE signature (
   signed_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M', 'now'))
 ) STRICT;
 
--- One row, the likes on Lesson 8's page.
+-- One row: the likes on the Live page.
 CREATE TABLE likes (
   id INTEGER PRIMARY KEY CHECK (id = 1),
   count INTEGER NOT NULL
