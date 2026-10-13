@@ -20,7 +20,7 @@ cd ../shipped &amp;&amp; ROUX_PORT=8081 ./main</code></pre>
 
 <section>
   <h2>On a server</h2>
-  <p>Copy <code>main</code> and <code>static/</code> to any machine with Linux 6.1 or later
+  <p>Copy <code>main</code> and <code>static/</code> to any machine with Linux 6.7 or later
   and an x86-64-v3 CPU, and run it. For HTTPS (kernel TLS: <code>modprobe tls</code> where it
   is a module) it gets its own certificate from Let's Encrypt at start, and redirects plain
   HTTP:</p>
