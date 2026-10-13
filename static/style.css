@@ -9,12 +9,11 @@
   --line: #3a2c25;
   --copper: #ec7a41;
   --copper-2: #ffb07a;
-  --roux: #8a4b2a;
   --code: #241a16;
   --ok: #8fc98a;
   /* The speed page: the phases of a save, and the race's lanes. */
   --p-roux: #ffb07a; --p-net: #ec7a41; --p-ready: #b8573a; --p-paint: #6e4a3c;
-  --lane-0: #e9b44c; --lane-1: #ec7a41; --lane-2: #e0567a; --lane-3: #5fb38a; --lane-4: #8a7cf0;
+  --lane-0: #e9b44c; --lane-1: #ec7a41; --lane-2: #e0567a; --lane-3: #5fb38a;
   --serif: "Iowan Old Style", "Palatino Linotype", Charter, "Bitstream Charter", Georgia, serif;
   --sans: system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif;
   --mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
@@ -25,7 +24,7 @@
     --bg: #fbf6ef; --bg-2: #f3eadf; --ink: #241812; --ink-2: #4c3a2e; --mute: #8a7564;
     --line: #e2d3c2; --copper: #c4561f; --copper-2: #9c3f12; --code: #f1e5d6; --ok: #2f7d32;
     --p-roux: #e08a4c; --p-net: #c4561f; --p-ready: #8f3d22; --p-paint: #c9a993;
-    --lane-0: #c98f16; --lane-1: #c4561f; --lane-2: #c23a62; --lane-3: #2f8f62; --lane-4: #5d4fd0;
+    --lane-0: #c98f16; --lane-1: #c4561f; --lane-2: #c23a62; --lane-3: #2f8f62;
     color-scheme: light;
   }
 }
@@ -105,7 +104,7 @@ section { margin: 2.2rem 0; }
 .empty { color: var(--mute); font-style: italic; }
 
 /* The term's column no wider than it must be, and never more than half. */
-dl.loop-table, dl.syntax { display: grid; grid-template-columns: fit-content(50%) 1fr; gap: 0.5rem 1.2rem; margin: 1rem 0; }
+dl.syntax { display: grid; grid-template-columns: fit-content(50%) 1fr; gap: 0.5rem 1.2rem; margin: 1rem 0; }
 dl dt { color: var(--ink); font-weight: 600; }
 dl dd { margin: 0; color: var(--ink-2); }
 
@@ -166,7 +165,7 @@ button:hover { filter: brightness(1.08); }
   margin: 1.2rem 0 0; }
 .fine code { font-size: 0.95em; }
 .note b { color: var(--ink-2); }
-.mono, .readout b, .legend dd, .rate, .stats b, .facts dt, .history li { font-variant-numeric: tabular-nums; }
+.readout b, .legend dd, .facts dt, .history li { font-variant-numeric: tabular-nums; }
 
 /* Save to pixels */
 .clock { display: grid; grid-template-columns: minmax(10rem, auto) 1fr; gap: 1.6rem; align-items: center; }
@@ -280,7 +279,7 @@ button:hover { filter: brightness(1.08); }
   .rail ol { grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); }
   .loop { display: none; }
   main { padding: 2rem 1.1rem 3rem; min-width: 0; }
-  dl.loop-table, dl.syntax { display: block; }
+  dl.syntax { display: block; }
   dl dd { margin: 0 0 0.8rem; }
   .book form { grid-template-columns: 1fr; }
   .turn a { min-width: 0; flex: 1; }

@@ -314,8 +314,6 @@
       if (!state.loader) return null;
       const result = state.lanes[0]?.result;
       if (result && lanes[i].stream) {
-        // A roux older than the events mode answers with requests.
-        if (result.events_per_second === undefined) return null;
         results[i].raw = result.events_per_second;
         part(i, "raw", "sub").textContent = `${result.streams.toLocaleString()} streams`;
         draw();
