@@ -20,12 +20,17 @@ cd ../shipped &amp;&amp; ROUX_PORT=8081 ./main</code></pre>
 
 <section>
   <h2>On a server</h2>
-  <p>Copy <code>main</code> and <code>static/</code> to any x86-64 Linux machine and run it. For
-  HTTPS it gets its own certificate from Let's Encrypt at start, and redirects plain HTTP:</p>
+  <p>Copy <code>main</code> and <code>static/</code> to any machine with Linux 6.1 or later
+  and an x86-64-v3 CPU, and run it. For HTTPS (kernel TLS: <code>modprobe tls</code> where it
+  is a module) it gets its own certificate from Let's Encrypt at start, and redirects plain
+  HTTP:</p>
   <pre class="term"><code>ROUX_ADDRESS=0.0.0.0 ROUX_PORT=443 ROUX_REDIRECT_PORT=80 \
 ROUX_ACME_DIRECTORY=https://acme-v02.api.letsencrypt.org/directory \
 ROUX_ACME_IDENTIFIER=example.com ROUX_ACME_STATE=/var/lib/myapp \
 ./main</code></pre>
+  <p>Over HTTPS it speaks HTTP/2, so a browser's requests and event streams share one
+  connection: live pages in many tabs do not run out of the six connections HTTP/1.1 allows
+  a site.</p>
   <p>The server is <a href="https://github.com/Eldhus/fourneau">fourneau</a>, written in Zig
   for exactly this: io_uring, a thread per core, your handlers on fibers. The drag race it runs
   against Go, Rust and others, each night something changed, is itself a roux app:
