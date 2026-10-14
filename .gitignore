@@ -1,11 +1,12 @@
-# The tools ./roux fetches, and what roux builds.
-.roux-tools/
+# roux build's working files, and the app it builds (named after main.roc).
 .roux/
 /main
-# What roux writes from templates/*.rocstache and db/*.sql.
-templates/*.roc
-db/*.roc
-# The app's database.
+# Made by roux build, and its layouts hash keys the path roc is installed at:
+# a committed copy is wrong on any other machine. The build writes it first.
+templates/Templates.roc
+# The app's SQLite database.
 *.db
 *.db-wal
 *.db-shm
+# The tools ./roux fetches.
+.roux-tools/

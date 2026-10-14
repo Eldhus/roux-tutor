@@ -1,4 +1,4 @@
-app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.2.6/FshUqDZyBKMS3s4tFrG6YcMoVUzBSd7guKenFmHM9jmG.tar.zst" }
+app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.3.0/8ZvMqvtXBdLbPJBNSLJx4eYYxTr3EEPFDgUEp6uYpdrN.tar.zst" }
 
 ## roux-tutor: the tutorial is this app. Every page you read is a template
 ## in templates/, filled from the Roc below, and `./roux dev main.roc` puts
@@ -64,8 +64,8 @@ init! = || {
 
 Err : [NotFound, BadRequest(Str), DbErr(Sqlite.Err), FileErr(File.FileErr), SseErr(Sse.SseErr)]
 
-## Every request. The pages made from data alone are `page`, pure; the ones
-## that read a file or the database are here.
+## Every request. The pages made from data alone are `page`, pure; the
+## routes with effects (a file, the database, a stream) are here.
 respond! : Server.Request, Context => Try(Server.Response(_), Err)
 respond! = |request, { db }| {
 	path = path_of(request.target)
@@ -235,7 +235,7 @@ path_of = |target|
 		Err(_) => target
 	}
 
-# ── Tests: `roc test main.roc` ─────────────────────────────────────────────
+# ── Tests: `./roux roc test main.roc` ──────────────────────────────────────
 
 expect page("/nope") == Err(NotFound)
 

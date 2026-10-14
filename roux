@@ -6,9 +6,9 @@
 #   ./roux roc test main.roc   roc: the Roc compiler roux uses
 set -eu
 
-roux=roux-0.2.6
-roux_url=https://github.com/Eldhus/roux/releases/download/v0.2.6/roux-0.2.6-x86_64-linux.tar.gz
-roux_sha256=65e0b27b7dcddbc7a005809cdd96b51dc8f22e724aa267b2b29d459533c4f80b
+roux=roux-0.3.0
+roux_url=https://github.com/Eldhus/roux/releases/download/v0.3.0/roux-0.3.0-x86_64-linux.tar.gz
+roux_sha256=86a7b14692eabb51bd4bffa76acd13bf23b8171f8348a0a3655d1274a27b3468
 
 roc=roc-nightly-2026-10-06-c34079d
 roc_url=https://github.com/roc-lang/nightlies/releases/download/nightly-2026-10-06-c34079d/roc_nightly-linux_x86_64-2026-10-06-c34079d.tar.gz
@@ -17,7 +17,8 @@ roc_sha256=11bf5c73b81e517ae2807f4211fe9e996f48f87a68b1e85b82c4ae2c6499a5d6
 tools=$(cd "$(dirname "$0")" && pwd)/.roux-tools
 
 # fetch NAME URL SHA256 STRIP: download, check, unpack into $tools/NAME.
-# STRIP is how many leading directories the archive's paths have.
+# STRIP is how many leading directories the archive's paths have. Then
+# the tool's other versions there (roux-*, roc-*), an older pin's, go.
 fetch() {
 	[ -d "$tools/$1" ] && return
 	echo "roux: fetching $1 (once)" >&2
@@ -32,6 +33,9 @@ fetch() {
 	tar -xzf "$tools/$1.tar.gz" -C "$tools/$1.unpacking" --strip-components="$4"
 	mv "$tools/$1.unpacking" "$tools/$1"
 	rm "$tools/$1.tar.gz"
+	for old in "$tools/${1%%-*}"-*; do
+		[ "$old" = "$tools/$1" ] || rm -rf "$old"
+	done
 }
 
 if [ "$(uname -sm)" != "Linux x86_64" ]; then
