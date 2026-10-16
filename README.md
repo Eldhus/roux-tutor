@@ -16,8 +16,9 @@ cd roux-tutor
 The first run downloads roux and the Roc compiler it uses into `.roux-tools/`
 
 Open <http://localhost:8080> to find:
-    - a two minute intro to roux
-    - a live speed demo
-    - and a handful of deeper examples
+
+- a two minute intro to roux
+- a live speed demo
+- and a handful of deeper examples
 
 Part of [Eldhus](https://github.com/Eldhus).
