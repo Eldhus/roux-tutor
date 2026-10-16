@@ -6,9 +6,9 @@
 #   ./roux roc test main.roc   roc: the Roc compiler roux uses
 set -eu
 
-roux=roux-0.3.0
-roux_url=https://github.com/Eldhus/roux/releases/download/v0.3.0/roux-0.3.0-x86_64-linux.tar.gz
-roux_sha256=86a7b14692eabb51bd4bffa76acd13bf23b8171f8348a0a3655d1274a27b3468
+roux=roux-0.4.0
+roux_url=https://github.com/Eldhus/roux/releases/download/v0.4.0/roux-0.4.0-x86_64-linux.tar.gz
+roux_sha256=c75a057e0681c741bdab80fae4af5842643fe999d990f0f8422a9e9dffe3338a
 
 roc=roc-nightly-2026-10-06-c34079d
 roc_url=https://github.com/roc-lang/nightlies/releases/download/nightly-2026-10-06-c34079d/roc_nightly-linux_x86_64-2026-10-06-c34079d.tar.gz
