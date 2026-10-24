@@ -37,10 +37,23 @@
     addEventListener("load", () => done(), { once: true });
   });
 
+  // What roux dev's pass did (/_dev/stats' `built`): a markup edit is a
+  // reread, timed from the save to the app told; anything else restarts the
+  // app, timed from the save to the app started again. Entries kept before
+  // `kind` existed were all rereads.
+  const kinds = {
+    templates: { label: "markup", what: "save seen, bytecode made, app told" },
+    roc: { label: "Roc", what: "save seen, roc compiled, app restarted" },
+    "roc, templates": { label: "Roc", what: "save seen, roc compiled, app restarted" },
+    static: { label: "static", what: "save seen, app restarted" },
+  };
+  const kindOf = (t) => kinds[t.kind ?? "templates"] ?? kinds.static;
+
   const show = (t) => {
     const total = t.roux + t.net + t.ready + t.paint;
     $("total").textContent = ms(total);
     $("roux").textContent = ms(t.roux);
+    $("roux-what").textContent = kindOf(t).what;
     $("net").textContent = ms(t.net);
     $("ready").textContent = ms(t.ready);
     $("paint").textContent = ms(t.paint);
@@ -58,7 +71,8 @@
       const w = (x) => (100 * x / most).toFixed(2);
       return `<li><span class="mini"><i class="p-roux" style="width:${w(h.roux)}%"></i>` +
         `<i class="p-net" style="width:${w(h.net)}%"></i><i class="p-ready" style="width:${w(h.ready)}%"></i>` +
-        `<i class="p-paint" style="width:${w(h.paint)}%"></i></span>${ms(total)}</li>`;
+        `<i class="p-paint" style="width:${w(h.paint)}%"></i></span>${ms(total)}` +
+        `<span class="kind">${kindOf(h).label}</span></li>`;
     }).join("");
   };
 
@@ -81,10 +95,11 @@
     const seen = sessionStorage.getItem(seenKey);
     const reread = `${stats.build}.${stats.reread}`;
     sessionStorage.setItem(seenKey, reread);
-    if (at && stats.built === "templates" && nav.type === "reload" && seen !== null && seen !== reread) {
+    if (at && nav.type === "reload" && seen !== null && seen !== reread) {
       await loaded();
       const paint = await painted();
       const timing = {
+        kind: stats.built,
         roux: stats.micros / 1000,
         net: Math.max(0, performance.timeOrigin - at) + nav.responseEnd,
         ready: Math.max(0, nav.loadEventStart - nav.responseEnd),
@@ -94,7 +109,9 @@
       history.unshift(timing);
       history.length = Math.min(history.length, 8);
       try { localStorage.setItem(kept, JSON.stringify(history)); } catch {}
-      $("note").textContent = "Save again. Most of it is the browser: roux's part is the first sliver.";
+      $("note").textContent = stats.built === "templates"
+        ? "Save again. Most of it is the browser: roux's part is the first sliver."
+        : "Save again. A restart is most of it: roc compiles, and the app starts anew.";
     } else if (history.length > 0) {
       show(history[0]);
       $("note").textContent = "Your last edits, newest first. Save again to add one.";

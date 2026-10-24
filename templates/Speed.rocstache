@@ -2,14 +2,15 @@
 <header>
   <p class="kicker">Speed</p>
   <h1>Measured here, now.</h1>
-  <p class="lede">Not a benchmark: your machine, your browser, this app. Save a template and
-  watch the clock; race your browser against roux-load.</p>
+  <p class="lede">Not a benchmark: your machine, your browser, this app. Save a template or
+  some Roc and watch the clock; race your browser against roux-load.</p>
 </header>
 
 <section class="card" id="edit">
   <div class="card-head">
     <h2>Save to pixels</h2>
-    <p>Edit <code>templates/Hello.rocstache</code>, save, look back.</p>
+    <p>Edit <code>templates/Hello.rocstache</code> (markup) or <code>main.roc</code> (Roc), save,
+    look back.</p>
   </div>
   <figure class="preview">
     <figcaption><code>templates/Hello.rocstache</code>, rendered</figcaption>
@@ -19,7 +20,7 @@
     <div class="phases">
       <div class="track" data-roux="track"><i class="p-roux"></i><i class="p-net"></i><i class="p-ready"></i><i class="p-paint"></i></div>
       <dl class="legend">
-        <div><dt><i class="p-roux"></i>roux</dt><dd data-roux="roux">–</dd><small>save seen, bytecode made, app told</small></div>
+        <div><dt><i class="p-roux"></i>roux</dt><dd data-roux="roux">–</dd><small data-roux="roux-what">save seen, bytecode made, app told</small></div>
         <div><dt><i class="p-net"></i>page back</dt><dd data-roux="net">–</dd><small>reload asked, HTML arrived</small></div>
         <div><dt><i class="p-ready"></i>page ready</dt><dd data-roux="ready">–</dd><small>parsed, styles and scripts in</small></div>
         <div><dt><i class="p-paint"></i>painted</dt><dd data-roux="paint">–</dd><small>the browser's next frame</small></div>
