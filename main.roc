@@ -1,4 +1,4 @@
-app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.4.0/Dgz7DP4kfKwfLySP4V3YbLe6oAGkhKkWFdmVAyoXa3SD.tar.zst" }
+app [Context, program] { pf: platform "https://github.com/Eldhus/roux/releases/download/v0.5.0/F64YeTuds37vXoyfMeKQBr2mcZSLh1X2iV5HvEkuurHG.tar.zst" }
 
 ## roux-tutor: the tutorial is this app. Every page you read is a template
 ## in templates/, filled from the Roc below, and `./roux dev main.roc` puts
@@ -151,7 +151,7 @@ live! = |db, request| {
 race_stream! : Server.Request => Try(Server.Response(_), Err)
 race_stream! = |request| {
 	match race_patches!(request) {
-		Err(SseErr(Disconnected)) => Ok(Server.streamed)
+		Err(SseErr(Disconnected)) => Ok(Server.streamed())
 		result => result
 	}
 }
