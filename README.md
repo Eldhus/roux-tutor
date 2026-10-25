@@ -21,4 +21,11 @@ Open <http://localhost:8080> to find:
 - a live speed demo
 - and a handful of deeper examples
 
+
+## Working on it
+
+With the app running, `node tests/idle.mjs` checks that every page stops drawing once it has
+loaded: an endless animation costs a whole CPU core in a browser without GPU acceleration. It needs
+Node 22 or later and Brave (or another Chromium, named by `BROWSER`).
+
 Part of [Eldhus](https://github.com/Eldhus).

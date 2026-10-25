@@ -64,10 +64,13 @@ pre.out { border-left: 3px solid var(--mute); color: var(--ink-2); }
 .rail li.here a b { background: var(--copper); border-color: var(--copper); color: #1b0f09; }
 .loop { margin-top: auto; font-size: 0.78rem; color: var(--mute); }
 .loop code { font-size: 0.74rem; }
-.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ok);
-  box-shadow: 0 0 0 0 var(--ok); animation: pulse 2.4s infinite; vertical-align: middle; }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 60%, transparent); }
-  70% { box-shadow: 0 0 0 7px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+.dot { position: relative; display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--ok); vertical-align: middle; }
+/* A few pulses, then still: an idle page draws nothing (tests/idle.mjs). The ring is its own layer,
+   moved by transform and opacity, so the pulses repaint nothing either. */
+.dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--ok);
+  opacity: 0; animation: pulse 2.4s 3; }
+@keyframes pulse { 0% { transform: scale(1); opacity: 0.6; } 70%, 100% { transform: scale(2.75); opacity: 0; } }
 
 /* The page */
 main { max-width: 800px; width: 100%; padding: 3.2rem 3rem 4rem; }
@@ -251,7 +254,7 @@ button:hover { filter: brightness(1.08); }
 .duel-row.running[data-side="browser"] .half.browser .bar,
 .duel-row.running[data-side="raw"] .half.raw .bar { min-width: 1.5rem; animation: racing 1.2s ease-in-out infinite; }
 @keyframes racing { 50% { opacity: 0.55; } }
-@media (prefers-reduced-motion: reduce) { .duel-row .bar { animation: none !important; transition: none; } }
+@media (prefers-reduced-motion: reduce) { .duel-row .bar, .dot::after { animation: none !important; transition: none; } }
 
 /* Facts */
 .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin: 1rem 0 0; }
