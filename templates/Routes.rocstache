@@ -17,13 +17,20 @@
   <ol class="steps">
     <li><p>In <code>main.roc</code>, find <code>page</code>. Where it says <em>a route of your own
     goes here</em>, add:</p>
-    <pre><code>["", "greet", name] =&gt; Ok(Rocstache.html(Greeting.template({ frame: frame("/routes"), name })))</code></pre>
+    <pre><code>["", "greet", name] =&gt; {
+	greeting = Greeting.template({ frame: frame("/routes"), name })
+	Ok(Rocstache.html(greeting))
+}</code></pre>
     <p>Follow the links again. The pattern binds <code>name</code> to that part of the path.</p></li>
     <li><p>At the bottom of <code>main.roc</code>, test it:</p>
-    <pre><code>expect page("/greet/Ada") == Ok(Rocstache.html(Greeting.template({ frame: frame("/routes"), name: "Ada" })))</code></pre>
+    <pre><code>expect {
+	ada = { frame: frame("/routes"), name: "Ada" }
+	expected = Ok(Rocstache.html(Greeting.template(ada)))
+	page("/greet/Ada") == expected
+}</code></pre>
     <p>In a second terminal: <code>./roux roc test main.roc</code> (the Roc compiler roux
     fetched for you). Change <code>"Ada"</code> on one side
-    and watch it fail, naming both values.</p></li>
+    and watch it fail.</p></li>
   </ol>
 </section>
 
@@ -41,7 +48,11 @@
   also reach inside a response, as the one in <code>main.roc</code> does:</p>
   <pre><code>expect
 	match page("/") {
-		Ok({ status: 200, body: Html({ template: Start(start_page), .. }), .. }) =&gt; start_page.hello == hello
+		Ok({
+			status: 200,
+			body: Html({ template: Start(start_page), .. }),
+			..
+		}) =&gt; start_page.hello == hello
 		_ =&gt; False
 	}</code></pre>
   <p>The HTML itself is roux's to get right: it tests its renderer against an oracle over

@@ -115,7 +115,11 @@ templates! = || {
 book! : Sqlite.Db, Server.Request => Try(Server.Response(_), Err)
 book! = |db, request| {
 	signatures = Guestbook.recent!(Sqlite.read(db, request))?
-	Ok(Rocstache.html(Book.template({ frame: frame("/guestbook"), nav: nav("/guestbook"), signatures })))
+	Ok(Rocstache.html(Book.template({
+		frame: frame("/guestbook"),
+		nav: nav("/guestbook"),
+		signatures,
+	})))
 }
 
 ## A signature from the form: written, then back to the page (303), so a
@@ -241,7 +245,11 @@ expect page("/nope") == Err(NotFound)
 
 expect
 	match page("/") {
-		Ok({ status: 200, body: Html({ template: Start(start_page), .. }), .. }) => start_page.hello == hello
+		Ok({
+			status: 200,
+			body: Html({ template: Start(start_page), .. }),
+			..
+		}) => start_page.hello == hello
 		_ => False
 	}
 

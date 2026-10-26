@@ -35,7 +35,12 @@ SELECT count(*) AS total FROM signature;</code></pre>
     <li><p>In <code>main.roc</code>, in <code>book!</code>, read the count and pass it on:</p>
     <pre><code>signatures = Guestbook.recent!(Sqlite.read(db, request))?
 { total } = Guestbook.count!(Sqlite.read(db, request))?
-Ok(Rocstache.html(Book.template({ frame: frame("/guestbook"), nav: nav("/guestbook"), signatures, total: total.to_str() })))</code></pre>
+Ok(Rocstache.html(Book.template({
+	frame: frame("/guestbook"),
+	nav: nav("/guestbook"),
+	signatures,
+	total: total.to_str(),
+})))</code></pre>
     <p>The template's fields are strings unless it declares a contract, so the count is made
     one here.</p></li>
   </ol>
