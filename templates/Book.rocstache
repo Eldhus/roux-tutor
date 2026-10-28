@@ -55,8 +55,10 @@ Ok(Rocstache.html(Book.template({
   writer (<code>Sqlite.write!</code>) and ends with <code>Sqlite.commit!</code>.</p>
   <p>Editing a query is like editing Roc: roux-db rewrites its module, roc builds, the app
   restarts, and a query roux-db refuses shows over the page with its line. Changing
-  <code>db/schema.sql</code> is different: there are no migrations yet, so the restarted app
-  refuses the old database and says so in this tab. Delete <code>tutor.db</code> (its rows
-  go) and press <em>Start it again</em> there.</p>
+  <code>db/schema.sql</code> changes the database too, as the app restarts: add a column with a
+  <code>DEFAULT</code> and every signature keeps its row, with that value. A table or column that goes is refused until a step in
+  <code>db/ledger.sql</code> renames or drops it, and the refusal, in this tab, writes the
+  step for you. How it works:
+  <a href="https://github.com/Eldhus/roux/blob/master/docs/migrations.md">roux's migrations</a>.</p>
 </section>
 {{> Bottom nav}}
